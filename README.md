@@ -1,5 +1,7 @@
 # Hub Central de Pedidos
 
+![Hub Central de Pedidos](doc/img/2025_09_28_IMAGE_001.png)
+
 Sistema integrado para centralização e gestão de pedidos de múltiplos marketplaces em uma interface unificada.
 
 ## Visão Geral
