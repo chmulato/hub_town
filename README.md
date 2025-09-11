@@ -43,6 +43,42 @@ O Hub Central de Pedidos é uma solução tecnológica avançada desenvolvida pa
 - Identificação de pedidos que requerem ação imediata
 - Controle de prazos de envio e entrega
 
+### Interface com Abas Organizadas
+- **Navegação por abas** para melhor organização
+- **Aba "Todos os Pedidos"**: Visão consolidada com resumos de cada marketplace
+- **Abas específicas**: Shopee, Mercado Livre e Shein com pedidos dedicados
+- **Contadores dinâmicos** mostrando quantidade de pedidos por aba
+- **Design responsivo** que se adapta a diferentes tamanhos de tela
+
+### Configuração Avançada de APIs
+
+![Tela de Configuração](doc/img/2025_09_28_IMAGE_003.png)
+
+O sistema inclui uma interface completa para configuração de endpoints e autenticação dos marketplaces:
+
+- **Configuração por Marketplace**: Campos específicos para cada plataforma
+  - **Shopee**: API Key, endpoint personalizado, tipos de autenticação
+  - **Mercado Livre**: OAuth 2.0, Client ID/Secret, configurações específicas
+  - **Shein**: API Key, Merchant ID, endpoint personalizado
+
+- **Tipos de Autenticação Suportados**:
+  - API Key para autenticação simples
+  - OAuth 2.0 para integrações seguras
+  - JWT Token para sistemas modernos
+  - Basic Auth para compatibilidade legacy
+
+- **Interface Intuitiva**:
+  - Modal de configuração acessível via ícone de engrenagem ⚙️
+  - Formulários organizados por marketplace com cores temáticas
+  - Campos mascarados para credenciais sensíveis
+  - Validação e feedback visual para cada configuração
+
+- **Flexibilidade de Configuração**:
+  - URLs de endpoint personalizáveis
+  - Credenciais específicas por marketplace
+  - Campos adicionais conforme necessário (Secret Keys, Merchant IDs)
+  - Salvamento seguro das configurações
+
 ## Início Rápido
 
 ### Requisitos do Sistema
@@ -118,6 +154,8 @@ O sistema classifica e exibe os pedidos com status codificados por cores:
 
 ### Versão Atual (2.0)
 - **Centralização de pedidos** Shopee, Mercado Livre e Shein
+- **Interface com abas organizadas** para melhor navegação
+- **Configuração avançada de APIs** para todos os marketplaces
 - **Sistema de busca unificada** com 60 pedidos totais
 - **Swagger UI completo** com documentação interativa
 - **Arquitetura modular** com config/, middleware/, routes/, services/
@@ -177,6 +215,8 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 
 ### Novidades da Versão 2.0
 - **Integração Shein**: 20 novos pedidos de moda internacional
+- **Interface com Abas**: Navegação organizada por marketplace
+- **Configuração de APIs**: Tela completa para configurar endpoints e autenticação
 - **Swagger UI**: Documentação interativa completa
 - **Arquitetura Modular**: Backend reorganizado e escalável
 - **JWT Authentication**: Sistema de autenticação configurável

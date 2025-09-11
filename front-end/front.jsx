@@ -22,6 +22,9 @@ export default function HubCD() {
   
   // Estado para controle das abas
   const [activeTab, setActiveTab] = useState('all');
+  
+  // Estado para controle da tela de configuração
+  const [showSettings, setShowSettings] = useState(false);
 
   const fetchOrders = async (shopeePage = 1, mlPage = 1, sheinPage = 1) => {
     setLoading(true);
@@ -29,9 +32,9 @@ export default function HubCD() {
     
     try {
       const [shopeeRes, mlRes, sheinRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/ml/orders?page=${mlPage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
+        fetch(`http://localhost:3001/api/marketplace/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
+        fetch(`http://localhost:3001/api/marketplace/mercadolivre/orders?page=${mlPage}&limit=${itemsPerPage}`),
+        fetch(`http://localhost:3001/api/marketplace/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
       ]);
 
       if (!shopeeRes.ok || !mlRes.ok || !sheinRes.ok) {
@@ -246,6 +249,183 @@ export default function HubCD() {
     );
   }
 
+  // Componente de Configuração de API
+  const SettingsModal = () => (
+    <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+      <div className="bg-white rounded-lg shadow-xl w-full max-w-4xl mx-4 max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center p-6 border-b">
+          <h2 className="text-2xl font-bold text-gray-800">Configurações de API dos Marketplaces</h2>
+          <button
+            onClick={() => setShowSettings(false)}
+            className="text-gray-400 hover:text-gray-600 text-2xl"
+          >
+            ×
+          </button>
+        </div>
+        
+        <div className="p-6">
+          {/* Shopee Configuration */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-4 rounded-lg border border-orange-200 mb-4">
+              <h3 className="text-lg font-semibold text-orange-800 flex items-center gap-2">
+                <span className="text-xl font-bold">SHOP</span>
+                Configuração Shopee
+              </h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Endpoint da API</label>
+                <input
+                  type="url"
+                  placeholder="https://api.shopee.com/v1/"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Autenticação</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500">
+                  <option value="api-key">API Key</option>
+                  <option value="oauth">OAuth 2.0</option>
+                  <option value="jwt">JWT Token</option>
+                  <option value="basic">Basic Auth</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">API Key / Token</label>
+                <input
+                  type="password"
+                  placeholder="Insira sua API Key ou Token"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Dados Adicionais</label>
+                <input
+                  type="text"
+                  placeholder="Secret Key, Client ID, etc."
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-orange-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Mercado Livre Configuration */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 p-4 rounded-lg border border-yellow-200 mb-4">
+              <h3 className="text-lg font-semibold text-yellow-800 flex items-center gap-2">
+                <span className="text-xl font-bold">STORE</span>
+                Configuração Mercado Livre
+              </h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Endpoint da API</label>
+                <input
+                  type="url"
+                  placeholder="https://api.mercadolibre.com/"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Autenticação</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500">
+                  <option value="oauth">OAuth 2.0</option>
+                  <option value="api-key">API Key</option>
+                  <option value="jwt">JWT Token</option>
+                  <option value="basic">Basic Auth</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Client ID</label>
+                <input
+                  type="text"
+                  placeholder="Insira seu Client ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Client Secret</label>
+                <input
+                  type="password"
+                  placeholder="Insira seu Client Secret"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-yellow-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Shein Configuration */}
+          <div className="mb-8">
+            <div className="bg-gradient-to-r from-purple-50 to-purple-100 p-4 rounded-lg border border-purple-200 mb-4">
+              <h3 className="text-lg font-semibold text-purple-800 flex items-center gap-2">
+                <span className="text-xl font-bold">FASHION</span>
+                Configuração Shein
+              </h3>
+            </div>
+            
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Endpoint da API</label>
+                <input
+                  type="url"
+                  placeholder="https://api.shein.com/v1/"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Tipo de Autenticação</label>
+                <select className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500">
+                  <option value="api-key">API Key</option>
+                  <option value="oauth">OAuth 2.0</option>
+                  <option value="jwt">JWT Token</option>
+                  <option value="basic">Basic Auth</option>
+                </select>
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">API Key / Token</label>
+                <input
+                  type="password"
+                  placeholder="Insira sua API Key ou Token"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">Merchant ID</label>
+                <input
+                  type="text"
+                  placeholder="Insira seu Merchant ID"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-purple-500"
+                />
+              </div>
+            </div>
+          </div>
+
+          {/* Action Buttons */}
+          <div className="flex justify-end gap-4 pt-6 border-t">
+            <button
+              onClick={() => setShowSettings(false)}
+              className="px-6 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
+            >
+              Cancelar
+            </button>
+            <button
+              onClick={() => {
+                // Aqui seria implementada a lógica para salvar as configurações
+                alert('Configurações salvas com sucesso!');
+                setShowSettings(false);
+              }}
+              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Salvar Configurações
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
   return (
     <div className="min-h-screen bg-gray-50">
       {/* Header */}
@@ -283,16 +463,25 @@ export default function HubCD() {
               )}
             </div>
             
-            <button 
-              onClick={() => {
-                setSearchTerm('');
-                setIsSearching(false);
-                fetchOrders();
-              }}
-              className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
-            >
-              🔄 Atualizar
-            </button>
+            <div className="flex gap-2">
+              <button 
+                onClick={() => setShowSettings(true)}
+                className="p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-colors"
+                title="Configurações de API"
+              >
+                ⚙️
+              </button>
+              <button 
+                onClick={() => {
+                  setSearchTerm('');
+                  setIsSearching(false);
+                  fetchOrders();
+                }}
+                className="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center gap-2"
+              >
+                🔄 Atualizar
+              </button>
+            </div>
           </div>
         </div>
       </header>
@@ -707,6 +896,9 @@ export default function HubCD() {
           )}
         </div>
       </div>
+      
+      {/* Modal de Configurações */}
+      {showSettings && <SettingsModal />}
     </div>
   );
 }
