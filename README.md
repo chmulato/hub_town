@@ -1,90 +1,157 @@
-# Hub
+# Hub Central de Pedidos
 
-Um projeto full-stack moderno com front-end React e back-end Node.js.
+Sistema integrado para centralização e gestão de pedidos de múltiplos marketplaces em uma interface unificada.
 
-## Descrição
+## Visão Geral
 
-Este projeto é composto por duas partes principais:
-- **Front-end**: Interface do usuário desenvolvida em React (JSX)
-- **Back-end**: API servidor desenvolvida em Node.js
+O Hub Central de Pedidos é uma solução tecnológica desenvolvida para empresas que vendem em múltiplas plataformas de e-commerce. O sistema centraliza todos os pedidos do Shopee e Mercado Livre em uma única interface, permitindo gestão eficiente e controle completo das operações.
 
-## Estrutura do Projeto
+## Valor de Negócio
+
+**Eficiência Operacional**: Reduza o tempo gasto alternando entre diferentes plataformas de marketplace, consolidando todas as informações em um só lugar.
+
+**Visibilidade Completa**: Tenha uma visão panorâmica de todos os pedidos, independente da origem, com estatísticas em tempo real.
+
+**Busca Avançada**: Localize rapidamente qualquer pedido utilizando código, nome do cliente, produto ou endereço de entrega.
+
+**Gestão Centralizada**: Monitore status de entregas, identifique gargalos operacionais e otimize processos de fulfillment.
+
+## Funcionalidades Principais
+
+### Centralização de Pedidos
+- Visualização unificada de pedidos do Shopee e Mercado Livre
+- Interface única para gerenciamento de múltiplos canais de venda
+- Sincronização automática de dados entre plataformas
+
+### Sistema de Busca Inteligente
+- Busca instantânea por código do pedido, nome do cliente, produto ou endereço
+- Filtros avançados para localização rápida de informações
+- Resultados em tempo real com paginação eficiente
+
+### Dashboard Executivo
+- Métricas consolidadas de vendas e entregas
+- Indicadores de performance por marketplace
+- Estatísticas de pedidos pendentes, enviados e entregues
+
+### Gestão de Status
+- Acompanhamento visual do status de cada pedido
+- Identificação de pedidos que requerem ação imediata
+- Controle de prazos de envio e entrega
+
+## Início Rápido
+
+### Requisitos do Sistema
+- Windows 10/11
+- Node.js 18+ instalado
+- Conexão com internet
+
+### Instalação e Execução
+```powershell
+# Clone o repositório
+git clone https://github.com/chmulato/hub_town.git
+cd hub_town
+
+# Execute o script de inicialização automática
+.\start.ps1
+```
+
+O script automatizado irá:
+1. Instalar todas as dependências necessárias
+2. Configurar o ambiente de desenvolvimento
+3. Inicializar o sistema back-end e front-end
+4. Abrir a aplicação no navegador
+
+### Acesso ao Sistema
+- **Interface Principal**: http://localhost:5173
+- **API de Dados**: http://localhost:3001
+
+## Dados e Integração
+
+### Fonte de Dados
+O sistema atualmente utiliza dados de demonstração que simulam pedidos reais:
+- **20 pedidos Shopee** com produtos e status variados
+- **20 pedidos Mercado Livre** com informações completas
+- Dados brasileiros realistas incluindo endereços e produtos locais
+
+### Capacidades da API
+- Endpoints REST para integração com sistemas existentes
+- Suporte a paginação para grandes volumes de dados
+- Filtros parametrizáveis para consultas específicas
+- Formato JSON padronizado para intercâmbio de dados
+
+## Arquitetura Técnica
+
+### Tecnologias Utilizadas
+- **Frontend**: React 18 com Vite para interface moderna e responsiva
+- **Backend**: Node.js com Express.js para API robusta e escalável
+- **Dados**: Arquivos JSON estruturados (preparado para migração para banco de dados)
+- **Interface**: Tailwind CSS para design profissional e consistente
+
+## Status dos Pedidos
+
+O sistema classifica e exibe os pedidos com status codificados por cores:
 
 ```
-hub/
-├── README.md
-├── back-end/
-│   └── server.js
-├── doc/
-└── front-end/
-    └── front.jsx
+| Status                | Descrição                          | Ação Requerida          |
+|-----------------------|------------------------------------|-------------------------|
+| **Entregue**          | Pedido finalizado com sucesso      | Nenhuma                 |
+| **Enviado**           | Pedido em trânsito para o cliente  | Acompanhar rastreamento |
+| **Pronto para Envio** | Pedido preparado aguardando coleta | Agendar envio           |
+| **Aguardando Coleta** | Pedido pendente de separação       | Processar pedido        |
 ```
 
-## Pré-requisitos
+## Roadmap de Desenvolvimento
 
-- Node.js (versão 14 ou superior)
-- npm ou yarn
+### Versão Atual (1.0)
+- Centralização de pedidos Shopee e Mercado Livre
+- Sistema de busca unificada
+- Dashboard com métricas básicas
+- Interface responsiva completa
 
-## Instalação
+### Próximas Versões
+- **Integração em Tempo Real**: Conexão direta com APIs dos marketplaces
+- **Relatórios Avançados**: Análises de vendas e performance
+- **Notificações**: Alertas automáticos para ações necessárias
+- **Gestão de Estoque**: Controle integrado de inventário
+- **Mobile App**: Aplicação nativa para gestão móvel
 
-### Back-end
-```bash
-cd back-end
-npm install
-```
+## Documentação Técnica
 
-### Front-end
-```bash
-cd front-end
-npm install
-```
+Para desenvolvedores e administradores de sistema, consulte a documentação técnica completa:
 
-## Execução
+- **[Guia de Instalação](doc/INSTALACAO.md)**: Configuração detalhada do ambiente
+- **[Documentação da API](doc/API.md)**: Referência completa dos endpoints
+- **[Arquitetura](doc/ARQUITETURA.md)**: Visão técnica do sistema
+- **[Guia do Desenvolvedor](doc/DESENVOLVIMENTO.md)**: Informações para contribuidores
 
-### Executar o Back-end
-```bash
-cd back-end
-npm start
-```
+## Suporte e Contato
 
-### Executar o Front-end
-```bash
-cd front-end
-npm start
-```
+### Suporte Técnico
+Para questões relacionadas à instalação, configuração ou uso do sistema:
+- Consulte a documentação técnica na pasta `doc/`
+- Abra uma issue no repositório GitHub
+- Entre em contato com a equipe de desenvolvimento
 
-## Funcionalidades
-
-- API RESTful no back-end
-- Interface responsiva no front-end
-- Comunicação entre front-end e back-end
-
-## Tecnologias Utilizadas
-
-### Back-end
-- Node.js
-- Express.js (presumido)
-
-### Front-end
-- React
-- JSX
-
-## Documentação
-
-Documentação adicional pode ser encontrada na pasta `doc/`.
-
-## Contribuição
-
-1. Faça um fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/nova-feature`)
-3. Commit suas mudanças (`git commit -am 'Adiciona nova feature'`)
-4. Push para a branch (`git push origin feature/nova-feature`)
-5. Abra um Pull Request
+### Proposta Comercial
+Para discussões sobre implementação em ambiente corporativo ou customizações específicas:
+- Entre em contato através do repositório GitHub
+- Solicite demonstração completa das funcionalidades
+- Consulte sobre adaptações para suas necessidades específicas
 
 ## Licença
 
-Este projeto está licenciado sob a [MIT License](LICENSE).
+Este projeto está licenciado sob a **MIT License** - uma licença permissiva que permite uso comercial, modificação, distribuição e uso privado do software.
 
-## Contato
+**Principais características da MIT License:**
+- **Uso Comercial**: Permitido uso em projetos comerciais
+- **Modificação**: Permitido modificar o código fonte
+- **Distribuição**: Permitido distribuir cópias do software
+- **Uso Privado**: Permitido uso interno sem restrições
+- **Sem Garantia**: Software fornecido "como está", sem garantias
 
-Para dúvidas ou sugestões, entre em contato através dos issues do projeto.
+Consulte o arquivo [LICENSE](LICENSE) para detalhes completos dos termos e condições.
+
+---
+
+**Hub Central de Pedidos** - Centralize, Gerencie, Otimize  
+Versão 1.0 | Setembro 2025 | Licenciado sob MIT License

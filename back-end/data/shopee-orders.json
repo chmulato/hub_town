@@ -1,0 +1,202 @@
+[
+  {
+    "orderId": "SHP12345",
+    "buyer": "João Silva",
+    "product": "Fone Bluetooth Premium",
+    "status": "READY_TO_SHIP",
+    "address": "Rua das Flores, 123 - Centro - São Paulo/SP",
+    "price": 89.90,
+    "quantity": 1,
+    "orderDate": "2025-09-10T14:30:00Z"
+  },
+  {
+    "orderId": "SHP67890",
+    "buyer": "Maria Oliveira",
+    "product": "Câmera HD 1080p",
+    "status": "WAITING_PICKUP",
+    "address": "Av. Paulista, 1000 - Bela Vista - São Paulo/SP",
+    "price": 299.99,
+    "quantity": 1,
+    "orderDate": "2025-09-10T15:45:00Z"
+  },
+  {
+    "orderId": "SHP24681",
+    "buyer": "Carlos Santos",
+    "product": "Mouse Gamer RGB",
+    "status": "SHIPPED",
+    "address": "Rua Augusta, 456 - Consolação - São Paulo/SP",
+    "price": 45.50,
+    "quantity": 2,
+    "orderDate": "2025-09-09T10:20:00Z"
+  },
+  {
+    "orderId": "SHP13579",
+    "buyer": "Ana Costa",
+    "product": "Teclado Mecânico",
+    "status": "DELIVERED",
+    "address": "Rua Oscar Freire, 789 - Jardins - São Paulo/SP",
+    "price": 199.90,
+    "quantity": 1,
+    "orderDate": "2025-09-08T16:15:00Z"
+  },
+  {
+    "orderId": "SHP97531",
+    "buyer": "Pedro Almeida",
+    "product": "Smartphone 128GB",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Faria Lima, 321 - Itaim Bibi - São Paulo/SP",
+    "price": 899.00,
+    "quantity": 1,
+    "orderDate": "2025-09-11T09:30:00Z"
+  },
+  {
+    "orderId": "SHP86420",
+    "buyer": "Fernanda Lima",
+    "product": "Carregador Portátil",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Consolação, 654 - República - São Paulo/SP",
+    "price": 79.90,
+    "quantity": 3,
+    "orderDate": "2025-09-10T11:20:00Z"
+  },
+  {
+    "orderId": "SHP75319",
+    "buyer": "Roberto Silva",
+    "product": "Caixa de Som Bluetooth",
+    "status": "SHIPPED",
+    "address": "Av. Rebouças, 987 - Pinheiros - São Paulo/SP",
+    "price": 149.99,
+    "quantity": 1,
+    "orderDate": "2025-09-09T14:45:00Z"
+  },
+  {
+    "orderId": "SHP64208",
+    "buyer": "Juliana Rocha",
+    "product": "Smartwatch Fitness",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Haddock Lobo, 234 - Cerqueira César - São Paulo/SP",
+    "price": 299.90,
+    "quantity": 1,
+    "orderDate": "2025-09-11T08:15:00Z"
+  },
+  {
+    "orderId": "SHP53197",
+    "buyer": "Lucas Barbosa",
+    "product": "Cabo USB-C 2m",
+    "status": "DELIVERED",
+    "address": "Av. Europa, 567 - Jardim Europa - São Paulo/SP",
+    "price": 24.90,
+    "quantity": 5,
+    "orderDate": "2025-09-07T13:30:00Z"
+  },
+  {
+    "orderId": "SHP42086",
+    "buyer": "Camila Ferreira",
+    "product": "Webcam Full HD",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Bela Cintra, 890 - Consolação - São Paulo/SP",
+    "price": 189.00,
+    "quantity": 1,
+    "orderDate": "2025-09-10T16:45:00Z"
+  },
+  {
+    "orderId": "SHP31975",
+    "buyer": "Gustavo Mendes",
+    "product": "Suporte para Notebook",
+    "status": "SHIPPED",
+    "address": "Av. Brigadeiro Faria Lima, 432 - Itaim - São Paulo/SP",
+    "price": 69.90,
+    "quantity": 1,
+    "orderDate": "2025-09-09T12:00:00Z"
+  },
+  {
+    "orderId": "SHP20864",
+    "buyer": "Patricia Santos",
+    "product": "Mousepad Gamer XXL",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Pamplona, 765 - Jardim Paulista - São Paulo/SP",
+    "price": 39.90,
+    "quantity": 2,
+    "orderDate": "2025-09-11T10:30:00Z"
+  },
+  {
+    "orderId": "SHP19753",
+    "buyer": "Diego Costa",
+    "product": "Fone Gaming 7.1",
+    "status": "DELIVERED",
+    "address": "Av. Angélica, 198 - Higienópolis - São Paulo/SP",
+    "price": 199.00,
+    "quantity": 1,
+    "orderDate": "2025-09-06T15:20:00Z"
+  },
+  {
+    "orderId": "SHP08642",
+    "buyer": "Mariana Oliveira",
+    "product": "Tablet 10 polegadas",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Estados Unidos, 543 - Jardins - São Paulo/SP",
+    "price": 449.90,
+    "quantity": 1,
+    "orderDate": "2025-09-10T09:15:00Z"
+  },
+  {
+    "orderId": "SHP97531",
+    "buyer": "Rafael Souza",
+    "product": "Controle Wireless",
+    "status": "SHIPPED",
+    "address": "Av. São João, 876 - Centro - São Paulo/SP",
+    "price": 129.90,
+    "quantity": 2,
+    "orderDate": "2025-09-08T17:45:00Z"
+  },
+  {
+    "orderId": "SHP86420",
+    "buyer": "Bruna Silva",
+    "product": "Microfone USB",
+    "status": "READY_TO_SHIP",
+    "address": "Rua da Consolação, 321 - Vila Buarque - São Paulo/SP",
+    "price": 89.00,
+    "quantity": 1,
+    "orderDate": "2025-09-11T11:45:00Z"
+  },
+  {
+    "orderId": "SHP75308",
+    "buyer": "Eduardo Lima",
+    "product": "SSD 500GB",
+    "status": "DELIVERED",
+    "address": "Av. Ipiranga, 654 - República - São Paulo/SP",
+    "price": 249.90,
+    "quantity": 1,
+    "orderDate": "2025-09-05T14:30:00Z"
+  },
+  {
+    "orderId": "SHP64197",
+    "buyer": "Larissa Costa",
+    "product": "Luminária LED USB",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Teodoro Sampaio, 987 - Pinheiros - São Paulo/SP",
+    "price": 34.90,
+    "quantity": 3,
+    "orderDate": "2025-09-10T13:20:00Z"
+  },
+  {
+    "orderId": "SHP53086",
+    "buyer": "Thiago Alves",
+    "product": "Hub USB 4 Portas",
+    "status": "SHIPPED",
+    "address": "Av. Nove de Julho, 234 - Bela Vista - São Paulo/SP",
+    "price": 49.90,
+    "quantity": 1,
+    "orderDate": "2025-09-09T08:45:00Z"
+  },
+  {
+    "orderId": "SHP41975",
+    "buyer": "Isabela Martins",
+    "product": "Adaptador HDMI para USB-C",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Alameda Santos, 567 - Paraíso - São Paulo/SP",
+    "price": 59.90,
+    "quantity": 2,
+    "orderDate": "2025-09-11T07:30:00Z"
+  }
+]

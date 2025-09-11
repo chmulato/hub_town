@@ -1,4 +1,49 @@
-# Scri# Função para verificar se a porta está sendo usada
+# Scri# Função par# Função para verificar se a porta está sendo usada
+function Test-Port {
+    param([int]$Port)
+    try {
+        $connection = New-Object System.Net.Sockets.TcpClient
+        $connection.Connect("127.0.0.1", $Port)
+        $connection.Close()
+        return $true
+    }
+    catch {
+        return $false
+    }
+}
+
+# Função para extrair a porta do código do back-end
+function Get-BackendPort {
+    param([string]$ServerFilePath)
+    
+    if (-not (Test-Path $ServerFilePath)) {
+        Write-Host "Arquivo server.js não encontrado" -ForegroundColor Red
+        return 3000  # porta padrão
+    }
+    
+    $content = Get-Content $ServerFilePath -Raw
+    
+    # Procurar por diferentes padrões de definição de porta
+    $patterns = @(
+        'const\s+PORT\s*=\s*(\d+)',
+        'let\s+PORT\s*=\s*(\d+)',
+        'var\s+PORT\s*=\s*(\d+)',
+        'PORT\s*=\s*(\d+)',
+        '\.listen\s*\(\s*(\d+)',
+        'process\.env\.PORT\s*\|\|\s*(\d+)'
+    )
+    
+    foreach ($pattern in $patterns) {
+        if ($content -match $pattern) {
+            $port = [int]$matches[1]
+            Write-Host "Porta detectada no código: $port" -ForegroundColor Green
+            return $port
+        }
+    }
+    
+    Write-Host "Porta não detectada, usando padrão 3000" -ForegroundColor Yellow
+    return 3000
+}e a porta está sendo usada
 function Test-Port {
     param([int]$Port)
     try {
@@ -33,6 +78,7 @@ function Test-Port {
 # Diretórios
 $backendDir = Join-Path $PSScriptRoot "back-end"
 $frontendDir = Join-Path $PSScriptRoot "front-end"
+$serverFile = Join-Path $backendDir "server.js"
 
 # Verificar se os diretórios existem
 if (-not (Test-Path $backendDir)) {
@@ -44,6 +90,10 @@ if (-not (Test-Path $frontendDir)) {
     Write-Host "Erro: Diretório front-end não encontrado" -ForegroundColor Red
     exit 1
 }
+
+# Detectar a porta do back-end automaticamente
+$backendPort = Get-BackendPort -ServerFilePath $serverFile
+Write-Host "Back-end configurado para porta: $backendPort" -ForegroundColor Cyan
 
 Write-Host ""
 Write-Host "Verificando dependências..." -ForegroundColor Yellow
@@ -76,8 +126,8 @@ Write-Host ""
 Write-Host "Iniciando serviços..." -ForegroundColor Yellow
 
 # Verificar se as portas estão livres
-if (Test-Port 3001) {
-    Write-Host "Porta 3001 já está em uso (back-end)" -ForegroundColor Yellow
+if (Test-Port $backendPort) {
+    Write-Host "Porta $backendPort já está em uso (back-end)" -ForegroundColor Yellow
 }
 
 if (Test-Port 5173) {
@@ -87,7 +137,7 @@ if (Test-Port 5173) {
 Write-Host ""
 
 # Iniciar o back-end em background
-Write-Host "Iniciando back-end na porta 3001..." -ForegroundColor Cyan
+Write-Host "Iniciando back-end na porta $backendPort..." -ForegroundColor Cyan
 Set-Location $backendDir
 
 $backendJob = Start-Job -ScriptBlock {
@@ -102,7 +152,7 @@ Start-Sleep -Seconds 3
 # Verificar se o back-end está rodando
 $backendRunning = $false
 for ($i = 1; $i -le 10; $i++) {
-    if (Test-Port 3001) {
+    if (Test-Port $backendPort) {
         $backendRunning = $true
         break
     }
@@ -111,7 +161,7 @@ for ($i = 1; $i -le 10; $i++) {
 
 if ($backendRunning) {
     Write-Host "Back-end iniciado com sucesso!" -ForegroundColor Green
-    Write-Host "  API disponível em: http://localhost:3001" -ForegroundColor Gray
+    Write-Host "  API disponível em: http://localhost:$backendPort" -ForegroundColor Gray
 } else {
     Write-Host "Back-end pode estar iniciando... Continuando..." -ForegroundColor Yellow
 }
@@ -125,7 +175,7 @@ Set-Location $frontendDir
 Write-Host ""
 Write-Host "Projeto Hub iniciado!" -ForegroundColor Green
 Write-Host "   Front-end: http://localhost:5173" -ForegroundColor Gray
-Write-Host "   Back-end: http://localhost:3001" -ForegroundColor Gray
+Write-Host "   Back-end: http://localhost:$backendPort" -ForegroundColor Gray
 Write-Host ""
 Write-Host "Pressione Ctrl+C para parar os serviços" -ForegroundColor Yellow
 Write-Host ""

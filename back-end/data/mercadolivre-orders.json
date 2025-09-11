@@ -1,0 +1,202 @@
+[
+  {
+    "orderId": "ML12345",
+    "buyer": "Carlos Souza",
+    "product": "Notebook Lenovo i5 8GB",
+    "status": "SHIPPED",
+    "address": "Av. Brasil, 123 - Copacabana - Rio de Janeiro/RJ",
+    "price": 2499.90,
+    "quantity": 1,
+    "orderDate": "2025-09-08T14:30:00Z"
+  },
+  {
+    "orderId": "ML67890",
+    "buyer": "Ana Pereira",
+    "product": "Smartphone Samsung Galaxy",
+    "status": "DELIVERED",
+    "address": "Rua das Flores, 55 - Centro - Rio de Janeiro/RJ",
+    "price": 899.00,
+    "quantity": 1,
+    "orderDate": "2025-09-05T16:20:00Z"
+  },
+  {
+    "orderId": "ML24680",
+    "buyer": "Roberto Santos",
+    "product": "TV Smart 43 polegadas",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Atlântica, 789 - Copacabana - Rio de Janeiro/RJ",
+    "price": 1699.99,
+    "quantity": 1,
+    "orderDate": "2025-09-10T10:15:00Z"
+  },
+  {
+    "orderId": "ML13579",
+    "buyer": "Mariana Costa",
+    "product": "Geladeira Brastemp 400L",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Visconde de Pirajá, 321 - Ipanema - Rio de Janeiro/RJ",
+    "price": 2199.90,
+    "quantity": 1,
+    "orderDate": "2025-09-09T09:45:00Z"
+  },
+  {
+    "orderId": "ML97531",
+    "buyer": "Fernando Lima",
+    "product": "Máquina de Lavar Electrolux",
+    "status": "SHIPPED",
+    "address": "Av. Nossa Senhora de Copacabana, 654 - Copacabana - Rio de Janeiro/RJ",
+    "price": 1299.00,
+    "quantity": 1,
+    "orderDate": "2025-09-07T15:30:00Z"
+  },
+  {
+    "orderId": "ML86420",
+    "buyer": "Patricia Alves",
+    "product": "Air Fryer Philco 4L",
+    "status": "DELIVERED",
+    "address": "Rua Barata Ribeiro, 987 - Copacabana - Rio de Janeiro/RJ",
+    "price": 299.90,
+    "quantity": 1,
+    "orderDate": "2025-09-04T11:20:00Z"
+  },
+  {
+    "orderId": "ML75319",
+    "buyer": "Gustavo Silva",
+    "product": "Console PlayStation 5",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Rio Branco, 234 - Centro - Rio de Janeiro/RJ",
+    "price": 4299.00,
+    "quantity": 1,
+    "orderDate": "2025-09-11T08:45:00Z"
+  },
+  {
+    "orderId": "ML64208",
+    "buyer": "Camila Rocha",
+    "product": "iPhone 15 128GB",
+    "status": "WAITING_PICKUP",
+    "address": "Rua General Osório, 567 - Ipanema - Rio de Janeiro/RJ",
+    "price": 4999.00,
+    "quantity": 1,
+    "orderDate": "2025-09-10T14:15:00Z"
+  },
+  {
+    "orderId": "ML53197",
+    "buyer": "Diego Barbosa",
+    "product": "Micro-ondas Panasonic 32L",
+    "status": "SHIPPED",
+    "address": "Av. Presidente Vargas, 890 - Centro - Rio de Janeiro/RJ",
+    "price": 449.90,
+    "quantity": 1,
+    "orderDate": "2025-09-08T16:30:00Z"
+  },
+  {
+    "orderId": "ML42086",
+    "buyer": "Juliana Ferreira",
+    "product": "Aspirador de Pó Robô",
+    "status": "DELIVERED",
+    "address": "Rua Siqueira Campos, 432 - Copacabana - Rio de Janeiro/RJ",
+    "price": 899.00,
+    "quantity": 1,
+    "orderDate": "2025-09-03T13:45:00Z"
+  },
+  {
+    "orderId": "ML31975",
+    "buyer": "Lucas Mendes",
+    "product": "Bicicleta Aro 29",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Pasteur, 765 - Urca - Rio de Janeiro/RJ",
+    "price": 1299.90,
+    "quantity": 1,
+    "orderDate": "2025-09-11T12:30:00Z"
+  },
+  {
+    "orderId": "ML20864",
+    "buyer": "Bruna Santos",
+    "product": "Cafeteira Expresso Dolce Gusto",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Tonelero, 198 - Copacabana - Rio de Janeiro/RJ",
+    "price": 189.90,
+    "quantity": 1,
+    "orderDate": "2025-09-10T07:20:00Z"
+  },
+  {
+    "orderId": "ML19753",
+    "buyer": "Rafael Oliveira",
+    "product": "Drone DJI Mini SE",
+    "status": "SHIPPED",
+    "address": "Av. Henrique Dodsworth, 543 - Copacabana - Rio de Janeiro/RJ",
+    "price": 1899.00,
+    "quantity": 1,
+    "orderDate": "2025-09-09T17:15:00Z"
+  },
+  {
+    "orderId": "ML08642",
+    "buyer": "Larissa Costa",
+    "product": "Soundbar LG 2.1 Canais",
+    "status": "DELIVERED",
+    "address": "Rua Figueiredo Magalhães, 876 - Copacabana - Rio de Janeiro/RJ",
+    "price": 599.90,
+    "quantity": 1,
+    "orderDate": "2025-09-02T14:50:00Z"
+  },
+  {
+    "orderId": "ML97420",
+    "buyer": "Thiago Souza",
+    "product": "Monitor Gamer 27 polegadas",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Copacabana, 321 - Copacabana - Rio de Janeiro/RJ",
+    "price": 899.00,
+    "quantity": 2,
+    "orderDate": "2025-09-11T09:30:00Z"
+  },
+  {
+    "orderId": "ML86531",
+    "buyer": "Isabela Silva",
+    "product": "Liquidificador Philips Walita",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Santa Clara, 654 - Copacabana - Rio de Janeiro/RJ",
+    "price": 149.90,
+    "quantity": 1,
+    "orderDate": "2025-09-10T15:45:00Z"
+  },
+  {
+    "orderId": "ML75208",
+    "buyer": "Eduardo Alves",
+    "product": "Cadeira Gamer Profissional",
+    "status": "SHIPPED",
+    "address": "Av. Atlântica, 987 - Copacabana - Rio de Janeiro/RJ",
+    "price": 799.90,
+    "quantity": 1,
+    "orderDate": "2025-09-08T11:20:00Z"
+  },
+  {
+    "orderId": "ML64097",
+    "buyer": "Amanda Lima",
+    "product": "Panela de Pressão Elétrica",
+    "status": "DELIVERED",
+    "address": "Rua Rodolfo Dantas, 234 - Copacabana - Rio de Janeiro/RJ",
+    "price": 199.00,
+    "quantity": 1,
+    "orderDate": "2025-09-01T16:10:00Z"
+  },
+  {
+    "orderId": "ML52986",
+    "buyer": "Pedro Costa",
+    "product": "Roteador Wi-Fi 6 TP-Link",
+    "status": "READY_TO_SHIP",
+    "address": "Av. Princesa Isabel, 567 - Copacabana - Rio de Janeiro/RJ",
+    "price": 299.90,
+    "quantity": 1,
+    "orderDate": "2025-09-11T13:15:00Z"
+  },
+  {
+    "orderId": "ML41864",
+    "buyer": "Natália Santos",
+    "product": "Escova Alisadora Britânia",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Duvivier, 890 - Copacabana - Rio de Janeiro/RJ",
+    "price": 89.90,
+    "quantity": 2,
+    "orderDate": "2025-09-10T18:30:00Z"
+  }
+]

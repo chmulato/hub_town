@@ -1,6 +1,7 @@
 {
   "name": "hub-frontend",
   "version": "1.0.0",
+  "type": "module",
   "description": "React frontend for Hub project",
   "main": "front.jsx",
   "scripts": {
