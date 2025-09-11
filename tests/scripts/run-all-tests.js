@@ -110,8 +110,8 @@ const generateSummary = (results) => {
 
 const main = async () => {
   const testFiles = [
-    'api-integration-test.js'
-    // Adicione novos arquivos de teste aqui
+    'api-integration-test.js',
+    'endpoint-config-test.js'
   ];
   
   const results = [];
