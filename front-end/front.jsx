@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 export default function HubCD() {
   const [shopeeOrders, setShopeeOrders] = useState([]);
   const [mlOrders, setMlOrders] = useState([]);
+  const [sheinOrders, setSheinOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [stats, setStats] = useState({ total: 0, shipped: 0, pending: 0 });
@@ -10,6 +11,7 @@ export default function HubCD() {
   // Estados para paginação
   const [shopeePagination, setShopeePagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
   const [mlPagination, setMlPagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
+  const [sheinPagination, setSheinPagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
   const [itemsPerPage] = useState(5);
   
   // Estados para busca unificada
@@ -18,25 +20,28 @@ export default function HubCD() {
   const [searchPagination, setSearchPagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
   const [isSearching, setIsSearching] = useState(false);
 
-  const fetchOrders = async (shopeePage = 1, mlPage = 1) => {
+  const fetchOrders = async (shopeePage = 1, mlPage = 1, sheinPage = 1) => {
     setLoading(true);
     setError(null);
     
     try {
-      const [shopeeRes, mlRes] = await Promise.all([
+      const [shopeeRes, mlRes, sheinRes] = await Promise.all([
         fetch(`http://localhost:3001/api/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/ml/orders?page=${mlPage}&limit=${itemsPerPage}`)
+        fetch(`http://localhost:3001/api/ml/orders?page=${mlPage}&limit=${itemsPerPage}`),
+        fetch(`http://localhost:3001/api/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
       ]);
 
-      if (!shopeeRes.ok || !mlRes.ok) {
+      if (!shopeeRes.ok || !mlRes.ok || !sheinRes.ok) {
         throw new Error('Erro ao conectar com a API');
       }
 
       const shopeeResponse = await shopeeRes.json();
       const mlResponse = await mlRes.json();
+      const sheinResponse = await sheinRes.json();
       
       setShopeeOrders(shopeeResponse.data);
       setMlOrders(mlResponse.data);
+      setSheinOrders(sheinResponse.data);
       
       // Atualizar informações de paginação
       setShopeePagination({
@@ -51,12 +56,19 @@ export default function HubCD() {
         total: mlResponse.total
       });
       
+      setSheinPagination({
+        currentPage: sheinResponse.currentPage,
+        totalPages: sheinResponse.totalPages,
+        total: sheinResponse.total
+      });
+      
       // Calcular estatísticas baseadas no total de todos os dados
-      const totalShipped = Math.floor((shopeeResponse.total + mlResponse.total) * 0.4); // Estimativa
-      const totalPending = (shopeeResponse.total + mlResponse.total) - totalShipped;
+      const totalOrders = shopeeResponse.total + mlResponse.total + sheinResponse.total;
+      const totalShipped = Math.floor(totalOrders * 0.4); // Estimativa
+      const totalPending = totalOrders - totalShipped;
       
       setStats({
-        total: shopeeResponse.total + mlResponse.total,
+        total: totalOrders,
         shipped: totalShipped,
         pending: totalPending
       });
@@ -71,11 +83,15 @@ export default function HubCD() {
 
   // Funções de navegação de páginas
   const handleShopeePageChange = (newPage) => {
-    fetchOrders(newPage, mlPagination.currentPage);
+    fetchOrders(newPage, mlPagination.currentPage, sheinPagination.currentPage);
   };
 
   const handleMlPageChange = (newPage) => {
-    fetchOrders(shopeePagination.currentPage, newPage);
+    fetchOrders(shopeePagination.currentPage, newPage, sheinPagination.currentPage);
+  };
+
+  const handleSheinPageChange = (newPage) => {
+    fetchOrders(shopeePagination.currentPage, mlPagination.currentPage, newPage);
   };
 
   // Função de busca unificada
@@ -213,7 +229,7 @@ export default function HubCD() {
     return (
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="bg-white p-8 rounded-lg shadow-md text-center">
-          <div className="text-red-600 text-5xl mb-4">⚠️</div>
+          <div className="text-red-600 text-5xl mb-4 font-bold">[ERROR]</div>
           <h2 className="text-xl font-bold text-gray-800 mb-2">Erro de Conexão</h2>
           <p className="text-gray-600 mb-4">{error}</p>
           <button 
@@ -246,7 +262,7 @@ export default function HubCD() {
                   className="w-full px-4 py-2 pl-10 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-gray-400">🔍</span>
+                  <span className="text-gray-400">[Search]</span>
                 </div>
                 {searchTerm && (
                   <button
@@ -324,7 +340,7 @@ export default function HubCD() {
             <div className="bg-white shadow-sm rounded-xl border">
               <div className="p-6 border-b bg-gradient-to-r from-blue-500 to-purple-600 text-white rounded-t-xl">
                 <div className="flex items-center gap-3">
-                  <span className="text-2xl">🔍</span>
+                  <span className="text-2xl font-bold text-blue-600">[SEARCH]</span>
                   <h2 className="text-xl font-bold">Resultados da Busca: "{searchTerm}"</h2>
                   <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
                     {searchPagination.total} encontrados
@@ -334,7 +350,7 @@ export default function HubCD() {
               <div className="p-6">
                 {searchResults.length === 0 ? (
                   <div className="text-center py-8 text-gray-500">
-                    <span className="text-4xl block mb-2">🔍</span>
+                    <div className="text-4xl block mb-2 text-gray-400">[NOT FOUND]</div>
                     Nenhum pedido encontrado para "{searchTerm}"
                     <p className="text-sm mt-2">Tente buscar por código do pedido, nome do cliente, produto ou endereço</p>
                   </div>
@@ -349,9 +365,15 @@ export default function HubCD() {
                               <span className={`px-2 py-1 text-xs rounded-full font-medium ${
                                 order.marketplace === 'shopee' 
                                   ? 'bg-orange-100 text-orange-600'
-                                  : 'bg-yellow-100 text-yellow-600'
+                                  : order.marketplace === 'mercadolivre'
+                                  ? 'bg-yellow-100 text-yellow-600'
+                                  : 'bg-purple-100 text-purple-600'
                               }`}>
-                                {order.marketplace === 'shopee' ? '🛍️ Shopee' : '🏪 Mercado Livre'}
+                                {order.marketplace === 'shopee' 
+                                  ? 'Shopee' 
+                                  : order.marketplace === 'mercadolivre'
+                                  ? 'Mercado Livre'
+                                  : 'Shein'}
                               </span>
                             </div>
                             <p className="text-sm text-gray-600">#{order.orderId}</p>
@@ -383,12 +405,12 @@ export default function HubCD() {
         )}
 
         {/* Orders Grid */}
-        <div className={`grid gap-8 lg:grid-cols-2 ${isSearching ? 'opacity-50' : ''}`}>
+        <div className={`grid gap-6 lg:grid-cols-3 ${isSearching ? 'opacity-50' : ''}`}>
           {/* Shopee Orders */}
           <div className="bg-white shadow-sm rounded-xl border">
             <div className="p-6 border-b bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-xl">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🛍️</span>
+                <span className="text-2xl font-bold text-orange-600">SHOP</span>
                 <h2 className="text-xl font-bold">Pedidos Shopee</h2>
                 <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
                   {shopeeOrders.length}
@@ -398,7 +420,7 @@ export default function HubCD() {
             <div className="p-6">
               {shopeeOrders.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  <span className="text-4xl block mb-2">📭</span>
+                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
                   Nenhum pedido encontrado
                 </div>
               ) : (
@@ -436,7 +458,7 @@ export default function HubCD() {
           <div className="bg-white shadow-sm rounded-xl border">
             <div className="p-6 border-b bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-t-xl">
               <div className="flex items-center gap-3">
-                <span className="text-2xl">🏪</span>
+                <span className="text-2xl font-bold text-yellow-600">STORE</span>
                 <h2 className="text-xl font-bold">Pedidos Mercado Livre</h2>
                 <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
                   {mlOrders.length}
@@ -446,7 +468,7 @@ export default function HubCD() {
             <div className="p-6">
               {mlOrders.length === 0 ? (
                 <div className="text-center py-8 text-gray-500">
-                  <span className="text-4xl block mb-2">📭</span>
+                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
                   Nenhum pedido encontrado
                 </div>
               ) : (
@@ -476,6 +498,54 @@ export default function HubCD() {
                 pagination={mlPagination} 
                 onPageChange={handleMlPageChange}
                 label="Mercado Livre"
+              />
+            </div>
+          </div>
+
+          {/* Shein Orders */}
+          <div className="bg-white shadow-sm rounded-xl border">
+            <div className="p-6 border-b bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-xl">
+              <div className="flex items-center gap-3">
+                <span className="text-2xl font-bold text-purple-600">FASHION</span>
+                <h2 className="text-xl font-bold">Pedidos Shein</h2>
+                <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
+                  {sheinOrders.length}
+                </span>
+              </div>
+            </div>
+            <div className="p-6">
+              {sheinOrders.length === 0 ? (
+                <div className="text-center py-8 text-gray-500">
+                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
+                  Nenhum pedido encontrado
+                </div>
+              ) : (
+                <div className="space-y-4">
+                  {sheinOrders.map((order) => (
+                    <div key={order.orderId} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h3 className="font-semibold text-gray-800">{order.product}</h3>
+                          <p className="text-sm text-gray-600">#{order.orderId}</p>
+                        </div>
+                        <span className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {formatStatus(order.status)}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm"><span className="font-medium">Cliente:</span> {order.buyer}</p>
+                        <p className="text-sm"><span className="font-medium">Endereço:</span> {order.address}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+              
+              {/* Paginação Shein */}
+              <PaginationComponent 
+                pagination={sheinPagination} 
+                onPageChange={handleSheinPageChange}
+                label="Shein"
               />
             </div>
           </div>

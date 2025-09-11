@@ -1,150 +1,141 @@
-// server.js
+// server.js - Servidor principal reorganizado
 import express from "express";
-import fs from 'fs';
-import path from 'path';
-import { fileURLToPath } from 'url';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import config from './config/config.js';
+import { swaggerSpec } from './config/swagger.js';
 
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
+// Importar rotas
+import authRoutes from './routes/auth.js';
+import marketplaceRoutes from './routes/marketplace.js';
+import ordersRoutes from './routes/orders.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = config.server.port;
 
-// Middleware CORS para permitir requisições do front-end
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*');
-  res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, DELETE, OPTIONS');
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept, Authorization');
-  
-  if (req.method === 'OPTIONS') {
-    res.sendStatus(200);
-  } else {
-    next();
-  }
-});
+// Middleware CORS configurável
+app.use(cors({
+  origin: config.server.cors.origins,
+  methods: config.server.cors.methods,
+  allowedHeaders: config.server.cors.headers,
+  credentials: true
+}));
 
 // Middleware para JSON
 app.use(express.json());
 
-// Função para carregar dados dos arquivos JSON
-function loadJsonData(filename) {
-  try {
-    const filePath = path.join(__dirname, 'data', filename);
-    const data = fs.readFileSync(filePath, 'utf8');
-    return JSON.parse(data);
-  } catch (error) {
-    console.error(`Erro ao carregar ${filename}:`, error);
-    return [];
-  }
-}
+// Middleware de logging
+app.use((req, res, next) => {
+  const timestamp = new Date().toISOString();
+  console.log(`[${timestamp}] ${req.method} ${req.path}`);
+  next();
+});
 
-// Função para filtrar pedidos
-function filterOrders(orders, search) {
-  if (!search) return orders;
-  
-  const searchTerm = search.toLowerCase();
-  
-  return orders.filter(order => 
-    order.orderId.toLowerCase().includes(searchTerm) ||
-    order.buyer.toLowerCase().includes(searchTerm) ||
-    order.product.toLowerCase().includes(searchTerm) ||
-    order.address.toLowerCase().includes(searchTerm) ||
-    order.status.toLowerCase().includes(searchTerm)
-  );
-}
-
-// Função para paginação
-function paginate(array, page = 1, limit = 5) {
-  const startIndex = (page - 1) * limit;
-  const endIndex = page * limit;
-  
-  const results = {};
-  
-  if (endIndex < array.length) {
-    results.next = {
-      page: page + 1,
-      limit: limit
-    };
+// Configurar Swagger UI
+app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
+  customCss: '.swagger-ui .topbar { display: none }',
+  customSiteTitle: "Hub Central de Pedidos - API Documentation",
+  swaggerOptions: {
+    persistAuthorization: true,
+    displayRequestDuration: true,
+    docExpansion: 'tag',
+    filter: true,
+    showExtensions: true,
+    showCommonExtensions: true
   }
-  
-  if (startIndex > 0) {
-    results.previous = {
-      page: page - 1,
-      limit: limit
-    };
-  }
-  
-  results.data = array.slice(startIndex, endIndex);
-  results.total = array.length;
-  results.currentPage = page;
-  results.totalPages = Math.ceil(array.length / limit);
-  results.search = '';
-  
-  return results;
-}
+}));
 
-// Mock Shopee - carrega dados do arquivo JSON com paginação e busca
+// Endpoint para obter o spec JSON do Swagger
+app.get('/api/swagger.json', (req, res) => {
+  res.setHeader('Content-Type', 'application/json');
+  res.send(swaggerSpec);
+});
+
+// Configurar rotas da API
+app.use('/api/auth', authRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/orders', ordersRoutes);
+
+// Endpoint de informações da API
+app.get('/api/info', (req, res) => {
+  res.json({
+    name: 'Hub Central de Pedidos API',
+    version: '2.0.0',
+    description: 'API unificada para gerenciamento de pedidos de múltiplos marketplaces',
+    endpoints: {
+      auth: '/api/auth',
+      marketplace: '/api/marketplace',
+      orders: '/api/orders'
+    },
+    features: {
+      authentication: config.auth.enabled,
+      marketplaces: Object.keys(config.marketplaces).filter(key => config.marketplaces[key].enabled),
+      pagination: true,
+      search: true,
+      realAPI: true
+    },
+    documentation: '/api/swagger'
+  });
+});
+
+// Endpoint de documentação (deprecated)
+app.get('/api/docs', (req, res) => {
+  res.json({
+    title: 'Hub Central de Pedidos - Documentação da API',
+    version: '2.0.0',
+    swaggerUI: '/api/swagger',
+    message: 'Use /api/swagger para documentação interativa completa'
+  });
+});
+
+// Rotas de compatibilidade com versão anterior (deprecated)
 app.get("/api/shopee/orders", (req, res) => {
-  let orders = loadJsonData('shopee-orders.json');
-  
-  const search = req.query.search;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
-  
-  // Aplicar filtro se houver busca
-  if (search) {
-    orders = filterOrders(orders, search);
-  }
-  
-  const paginatedResults = paginate(orders, page, limit);
-  res.json(paginatedResults);
+  res.redirect(301, `/api/marketplace/shopee/orders?${new URLSearchParams(req.query)}`);
 });
 
-// Mock Mercado Livre - carrega dados do arquivo JSON com paginação e busca
 app.get("/api/ml/orders", (req, res) => {
-  let orders = loadJsonData('mercadolivre-orders.json');
-  
-  const search = req.query.search;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 5;
-  
-  // Aplicar filtro se houver busca
-  if (search) {
-    orders = filterOrders(orders, search);
-  }
-  
-  const paginatedResults = paginate(orders, page, limit);
-  res.json(paginatedResults);
+  res.redirect(301, `/api/marketplace/mercadolivre/orders?${new URLSearchParams(req.query)}`);
 });
 
-// Endpoint unificado para buscar em ambos os marketplaces
-app.get("/api/orders/search", (req, res) => {
-  const shopeeOrders = loadJsonData('shopee-orders.json');
-  const mlOrders = loadJsonData('mercadolivre-orders.json');
-  
-  const search = req.query.search;
-  const page = parseInt(req.query.page) || 1;
-  const limit = parseInt(req.query.limit) || 10;
-  
-  // Adicionar identificador do marketplace aos pedidos
-  const shopeeWithSource = shopeeOrders.map(order => ({ ...order, marketplace: 'shopee' }));
-  const mlWithSource = mlOrders.map(order => ({ ...order, marketplace: 'mercadolivre' }));
-  
-  // Combinar todos os pedidos
-  let allOrders = [...shopeeWithSource, ...mlWithSource];
-  
-  // Aplicar filtro se houver busca
-  if (search) {
-    allOrders = filterOrders(allOrders, search);
-  }
-  
-  // Ordenar por ID do pedido
-  allOrders.sort((a, b) => a.orderId.localeCompare(b.orderId));
-  
-  const paginatedResults = paginate(allOrders, page, limit);
-  res.json(paginatedResults);
+app.get("/api/shein/orders", (req, res) => {
+  res.redirect(301, `/api/marketplace/shein/orders?${new URLSearchParams(req.query)}`);
 });
 
-app.listen(PORT, () => {
-  console.log(`Mock API running at http://localhost:${PORT}`);
+// Middleware de tratamento de erros
+app.use((error, req, res, next) => {
+  console.error('Erro não tratado:', error);
+  
+  res.status(500).json({
+    success: false,
+    error: 'Erro interno do servidor',
+    code: 'INTERNAL_SERVER_ERROR',
+    ...(process.env.NODE_ENV === 'development' && { details: error.message })
+  });
+});
+
+// Middleware para rotas não encontradas
+app.use('*', (req, res) => {
+  res.status(404).json({
+    success: false,
+    error: 'Endpoint não encontrado',
+    code: 'NOT_FOUND',
+    availableEndpoints: [
+      '/api/info',
+      '/api/docs',
+      '/api/auth/*',
+      '/api/marketplace/*',
+      '/api/orders/*'
+    ]
+  });
+});
+
+// Iniciar servidor
+app.listen(PORT, config.server.host, () => {
+  console.log(`Hub Central de Pedidos API iniciada!`);
+  console.log(`Servidor: http://${config.server.host}:${PORT}`);
+  console.log(`Swagger UI: http://${config.server.host}:${PORT}/api/swagger`);
+  console.log(`Documentação: http://${config.server.host}:${PORT}/api/docs`);
+  console.log(`Autenticação: ${config.auth.enabled ? 'Habilitada' : 'Desabilitada'}`);
+  console.log(`Marketplaces ativos: ${Object.keys(config.marketplaces).filter(key => config.marketplaces[key].enabled).join(', ')}`);
+  console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
 });
