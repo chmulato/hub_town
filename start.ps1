@@ -1,4 +1,11 @@
-# Scri# Função par# Função para verificar se a porta está sendo usada
+# start.ps1
+# Script para inicializar o Hub Central de Pedidos
+# Executa no Windows PowerShell
+
+Write-Host "Iniciando o Hub Central de Pedidos..." -ForegroundColor Green
+Write-Host ""
+
+# Função para verificar se a porta está sendo usada
 function Test-Port {
     param([int]$Port)
     try {
@@ -18,7 +25,7 @@ function Get-BackendPort {
     
     if (-not (Test-Path $ServerFilePath)) {
         Write-Host "Arquivo server.js não encontrado" -ForegroundColor Red
-        return 3000  # porta padrão
+        return 3001  # porta padrão
     }
     
     $content = Get-Content $ServerFilePath -Raw
@@ -41,39 +48,11 @@ function Get-BackendPort {
         }
     }
     
-    Write-Host "Porta não detectada, usando padrão 3000" -ForegroundColor Yellow
-    return 3000
-}e a porta está sendo usada
-function Test-Port {
-    param([int]$Port)
-    try {
-        $connection = New-Object System.Net.Sockets.TcpClient
-        $connection.Connect("localhost", $Port)
-        $connection.Close()
-        return $true
-    }
-    catch {
-        return $false
-    }
-}ização do Hub - Back-end Mock + Front-end React
-# Executa no Windows PowerShell
-
-Write-Host "Iniciando o projeto Hub..." -ForegroundColor Green
-Write-Host ""
-
-# Função para verificar se uma porta está em uso
-function Test-Port {
-    param([int]$Port)
-    try {
-        $connection = New-Object System.Net.Sockets.TcpClient
-        $connection.Connect("127.0.0.1", $Port)
-        $connection.Close()
-        return $true
-    }
-    catch {
-        return $false
-    }
+    Write-Host "Porta não detectada, usando padrão 3001" -ForegroundColor Yellow
+    return 3001
 }
+
+
 
 # Diretórios
 $backendDir = Join-Path $PSScriptRoot "back-end"

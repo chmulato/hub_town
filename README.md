@@ -20,6 +20,8 @@ O Hub Central de Pedidos é uma solução tecnológica desenvolvida para empresa
 
 ## Funcionalidades Principais
 
+![Interface da Aplicação](doc/img/2025_09_28_IMAGE_002.png)
+
 ### Centralização de Pedidos
 - Visualização unificada de pedidos do Shopee e Mercado Livre
 - Interface única para gerenciamento de múltiplos canais de venda
