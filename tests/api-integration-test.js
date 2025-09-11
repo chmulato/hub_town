@@ -98,7 +98,7 @@ const testHubAPI = async () => {
       console.log('❌ Erro no redirecionamento:', legacyResponse.status);
     }
 
-    console.log('\n🎉 Teste completo finalizado!');
+    console.log('\n� Teste completo finalizado!');
     
   } catch (error) {
     console.error('❌ Erro geral ao testar APIs:', error.message);

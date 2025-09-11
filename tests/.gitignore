@@ -1,0 +1,14 @@
+# Resultados de teste (manter estrutura, ignorar dados)
+results/*.json
+results/*.txt
+results/*.log
+
+# Logs temporários
+*.tmp
+*.temp
+
+# Node modules se houver
+node_modules/
+
+# Arquivos de ambiente específicos de teste
+.env.test.local

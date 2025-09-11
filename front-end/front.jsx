@@ -19,6 +19,9 @@ export default function HubCD() {
   const [searchResults, setSearchResults] = useState([]);
   const [searchPagination, setSearchPagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
   const [isSearching, setIsSearching] = useState(false);
+  
+  // Estado para controle das abas
+  const [activeTab, setActiveTab] = useState('all');
 
   const fetchOrders = async (shopeePage = 1, mlPage = 1, sheinPage = 1) => {
     setLoading(true);
@@ -262,14 +265,14 @@ export default function HubCD() {
                   className="w-full px-4 py-2 pl-10 text-gray-700 bg-gray-50 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-all"
                 />
                 <div className="absolute inset-y-0 left-0 flex items-center pl-3">
-                  <span className="text-gray-400">[Search]</span>
+                  <span className="text-gray-400">🔍</span>
                 </div>
                 {searchTerm && (
                   <button
                     onClick={() => handleSearchChange('')}
                     className="absolute inset-y-0 right-0 flex items-center pr-3 text-gray-400 hover:text-gray-600"
                   >
-                    <span>✕</span>
+                    <span>×</span>
                   </button>
                 )}
               </div>
@@ -404,27 +407,172 @@ export default function HubCD() {
           </div>
         )}
 
-        {/* Orders Grid */}
-        <div className={`grid gap-6 lg:grid-cols-3 ${isSearching ? 'opacity-50' : ''}`}>
-          {/* Shopee Orders */}
-          <div className="bg-white shadow-sm rounded-xl border">
-            <div className="p-6 border-b bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-t-xl">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-orange-600">SHOP</span>
-                <h2 className="text-xl font-bold">Pedidos Shopee</h2>
-                <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
-                  {shopeeOrders.length}
-                </span>
+        {/* Tab Navigation */}
+        <div className="bg-white shadow-sm rounded-t-xl border border-b-0">
+          <div className="flex space-x-0 border-b">
+            <button
+              onClick={() => setActiveTab('all')}
+              className={`px-6 py-4 font-medium text-sm rounded-tl-xl transition-colors duration-200 ${
+                activeTab === 'all'
+                  ? 'bg-blue-600 text-white border-b-2 border-blue-600'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Todos os Pedidos ({shopeeOrders.length + mlOrders.length + sheinOrders.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('shopee')}
+              className={`px-6 py-4 font-medium text-sm transition-colors duration-200 border-l ${
+                activeTab === 'shopee'
+                  ? 'bg-orange-500 text-white border-b-2 border-orange-500'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Shopee ({shopeeOrders.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('mercadolivre')}
+              className={`px-6 py-4 font-medium text-sm transition-colors duration-200 border-l ${
+                activeTab === 'mercadolivre'
+                  ? 'bg-yellow-500 text-white border-b-2 border-yellow-500'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Mercado Livre ({mlOrders.length})
+            </button>
+            <button
+              onClick={() => setActiveTab('shein')}
+              className={`px-6 py-4 font-medium text-sm rounded-tr-xl transition-colors duration-200 border-l ${
+                activeTab === 'shein'
+                  ? 'bg-purple-500 text-white border-b-2 border-purple-500'
+                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+              }`}
+            >
+              Shein ({sheinOrders.length})
+            </button>
+          </div>
+        </div>
+
+        {/* Tab Content */}
+        <div className={`bg-white shadow-sm rounded-b-xl border border-t-0 ${isSearching ? 'opacity-50' : ''}`}>
+          {/* Aba Todos os Pedidos */}
+          {activeTab === 'all' && (
+            <div className="p-6">
+              <div className="grid gap-6 lg:grid-cols-3">
+                {/* Resumo Shopee */}
+                <div className="bg-gradient-to-r from-orange-50 to-orange-100 rounded-xl p-6 border border-orange-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xl font-bold text-orange-600">SHOP</span>
+                    <h3 className="text-lg font-semibold text-orange-800">Shopee</h3>
+                    <span className="bg-orange-200 px-2 py-1 rounded-full text-sm text-orange-800">
+                      {shopeeOrders.length}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-orange-700">
+                      <span className="font-medium">Pedidos recentes:</span> {shopeeOrders.slice(0, 3).length}
+                    </p>
+                    <button
+                      onClick={() => setActiveTab('shopee')}
+                      className="text-sm text-orange-600 hover:text-orange-800 font-medium hover:underline"
+                    >
+                      Ver todos os pedidos →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Resumo Mercado Livre */}
+                <div className="bg-gradient-to-r from-yellow-50 to-yellow-100 rounded-xl p-6 border border-yellow-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xl font-bold text-yellow-600">STORE</span>
+                    <h3 className="text-lg font-semibold text-yellow-800">Mercado Livre</h3>
+                    <span className="bg-yellow-200 px-2 py-1 rounded-full text-sm text-yellow-800">
+                      {mlOrders.length}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-yellow-700">
+                      <span className="font-medium">Pedidos recentes:</span> {mlOrders.slice(0, 3).length}
+                    </p>
+                    <button
+                      onClick={() => setActiveTab('mercadolivre')}
+                      className="text-sm text-yellow-600 hover:text-yellow-800 font-medium hover:underline"
+                    >
+                      Ver todos os pedidos →
+                    </button>
+                  </div>
+                </div>
+
+                {/* Resumo Shein */}
+                <div className="bg-gradient-to-r from-purple-50 to-purple-100 rounded-xl p-6 border border-purple-200">
+                  <div className="flex items-center gap-3 mb-4">
+                    <span className="text-xl font-bold text-purple-600">FASHION</span>
+                    <h3 className="text-lg font-semibold text-purple-800">Shein</h3>
+                    <span className="bg-purple-200 px-2 py-1 rounded-full text-sm text-purple-800">
+                      {sheinOrders.length}
+                    </span>
+                  </div>
+                  <div className="space-y-2">
+                    <p className="text-sm text-purple-700">
+                      <span className="font-medium">Pedidos recentes:</span> {sheinOrders.slice(0, 3).length}
+                    </p>
+                    <button
+                      onClick={() => setActiveTab('shein')}
+                      className="text-sm text-purple-600 hover:text-purple-800 font-medium hover:underline"
+                    >
+                      Ver todos os pedidos →
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Lista unificada dos pedidos mais recentes */}
+              <div className="mt-8">
+                <h3 className="text-lg font-semibold text-gray-800 mb-4">Pedidos Recentes de Todos os Marketplaces</h3>
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+                  {[...shopeeOrders.slice(0, 2), ...mlOrders.slice(0, 2), ...sheinOrders.slice(0, 2)].map((order, index) => (
+                    <div key={`${order.marketplace}-${order.orderId}`} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
+                      <div className="flex justify-between items-start mb-3">
+                        <div>
+                          <h4 className="font-semibold text-gray-800">{order.product}</h4>
+                          <p className="text-sm text-gray-600">#{order.orderId}</p>
+                          <p className="text-xs text-gray-500 capitalize">{order.marketplace}</p>
+                        </div>
+                        <span className={`px-2 py-1 rounded-full text-xs font-medium ${getStatusColor(order.status)}`}>
+                          {formatStatus(order.status)}
+                        </span>
+                      </div>
+                      <div className="space-y-1">
+                        <p className="text-sm"><span className="font-medium">Cliente:</span> {order.buyer}</p>
+                        <p className="text-sm"><span className="font-medium">Endereço:</span> {order.address}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
               </div>
             </div>
+          )}
+
+          {/* Aba Shopee */}
+          {activeTab === 'shopee' && (
             <div className="p-6">
+              <div className="bg-gradient-to-r from-orange-500 to-orange-600 text-white rounded-xl p-6 mb-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-bold">SHOP</span>
+                  <h2 className="text-xl font-bold">Pedidos Shopee</h2>
+                  <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
+                    {shopeeOrders.length}
+                  </span>
+                </div>
+              </div>
+              
               {shopeeOrders.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-4xl block mb-2 text-gray-400">📦</div>
                   Nenhum pedido encontrado
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {shopeeOrders.map((order) => (
                     <div key={order.orderId} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-3">
@@ -446,33 +594,36 @@ export default function HubCD() {
               )}
               
               {/* Paginação Shopee */}
-              <PaginationComponent 
-                pagination={shopeePagination} 
-                onPageChange={handleShopeePageChange}
-                label="Shopee"
-              />
-            </div>
-          </div>
-
-          {/* Mercado Livre Orders */}
-          <div className="bg-white shadow-sm rounded-xl border">
-            <div className="p-6 border-b bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-t-xl">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-yellow-600">STORE</span>
-                <h2 className="text-xl font-bold">Pedidos Mercado Livre</h2>
-                <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
-                  {mlOrders.length}
-                </span>
+              <div className="mt-6">
+                <PaginationComponent 
+                  pagination={shopeePagination} 
+                  onPageChange={handleShopeePageChange}
+                  label="Shopee"
+                />
               </div>
             </div>
+          )}
+
+          {/* Aba Mercado Livre */}
+          {activeTab === 'mercadolivre' && (
             <div className="p-6">
+              <div className="bg-gradient-to-r from-yellow-400 to-yellow-500 text-white rounded-xl p-6 mb-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-bold">STORE</span>
+                  <h2 className="text-xl font-bold">Pedidos Mercado Livre</h2>
+                  <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
+                    {mlOrders.length}
+                  </span>
+                </div>
+              </div>
+              
               {mlOrders.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-4xl block mb-2 text-gray-400">🛒</div>
                   Nenhum pedido encontrado
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {mlOrders.map((order) => (
                     <div key={order.orderId} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-3">
@@ -494,33 +645,36 @@ export default function HubCD() {
               )}
               
               {/* Paginação Mercado Livre */}
-              <PaginationComponent 
-                pagination={mlPagination} 
-                onPageChange={handleMlPageChange}
-                label="Mercado Livre"
-              />
-            </div>
-          </div>
-
-          {/* Shein Orders */}
-          <div className="bg-white shadow-sm rounded-xl border">
-            <div className="p-6 border-b bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-t-xl">
-              <div className="flex items-center gap-3">
-                <span className="text-2xl font-bold text-purple-600">FASHION</span>
-                <h2 className="text-xl font-bold">Pedidos Shein</h2>
-                <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
-                  {sheinOrders.length}
-                </span>
+              <div className="mt-6">
+                <PaginationComponent 
+                  pagination={mlPagination} 
+                  onPageChange={handleMlPageChange}
+                  label="Mercado Livre"
+                />
               </div>
             </div>
+          )}
+
+          {/* Aba Shein */}
+          {activeTab === 'shein' && (
             <div className="p-6">
+              <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white rounded-xl p-6 mb-6">
+                <div className="flex items-center gap-3">
+                  <span className="text-2xl font-bold">FASHION</span>
+                  <h2 className="text-xl font-bold">Pedidos Shein</h2>
+                  <span className="bg-white/20 px-2 py-1 rounded-full text-sm">
+                    {sheinOrders.length}
+                  </span>
+                </div>
+              </div>
+              
               {sheinOrders.length === 0 ? (
-                <div className="text-center py-8 text-gray-500">
-                  <div className="text-4xl block mb-2 text-gray-400">[-]</div>
+                <div className="text-center py-12 text-gray-500">
+                  <div className="text-4xl block mb-2 text-gray-400">👗</div>
                   Nenhum pedido encontrado
                 </div>
               ) : (
-                <div className="space-y-4">
+                <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
                   {sheinOrders.map((order) => (
                     <div key={order.orderId} className="border border-gray-200 rounded-lg p-4 hover:shadow-md transition-shadow">
                       <div className="flex justify-between items-start mb-3">
@@ -542,13 +696,15 @@ export default function HubCD() {
               )}
               
               {/* Paginação Shein */}
-              <PaginationComponent 
-                pagination={sheinPagination} 
-                onPageChange={handleSheinPageChange}
-                label="Shein"
-              />
+              <div className="mt-6">
+                <PaginationComponent 
+                  pagination={sheinPagination} 
+                  onPageChange={handleSheinPageChange}
+                  label="Shein"
+                />
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>

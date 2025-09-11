@@ -1,0 +1,10 @@
+# Arquivo placeholder para manter a pasta results no git
+# Os resultados reais dos testes são ignorados pelo .gitignore
+# mas esta pasta precisa existir para o funcionamento dos scripts
+
+Este diretório contém os resultados dos testes automatizados:
+- latest-test-result.json (último resultado em JSON)
+- latest-test-result.txt (último resultado em texto)
+- test-history.log (histórico de execuções)
+
+Os arquivos de resultado são gerados automaticamente durante a execução dos testes.
