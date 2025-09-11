@@ -2,11 +2,11 @@
 
 ![Hub Central de Pedidos](doc/img/2025_09_28_IMAGE_001.png)
 
-Sistema integrado para centralização e gestão de pedidos de múltiplos marketplaces em uma interface unificada.
+Sistema integrado para centralização e gestão de pedidos de múltiplos marketplaces em uma interface unificada com documentação interativa Swagger UI.
 
 ## Visão Geral
 
-O Hub Central de Pedidos é uma solução tecnológica desenvolvida para empresas que vendem em múltiplas plataformas de e-commerce. O sistema centraliza todos os pedidos do Shopee e Mercado Livre em uma única interface, permitindo gestão eficiente e controle completo das operações.
+O Hub Central de Pedidos é uma solução tecnológica avançada desenvolvida para empresas que vendem em múltiplas plataformas de e-commerce. O sistema centraliza todos os pedidos do **Shopee**, **Mercado Livre** e **Shein** em uma única interface, permitindo gestão eficiente e controle completo das operações com arquitetura modular e API documentada.
 
 ## Valor de Negócio
 
@@ -23,9 +23,10 @@ O Hub Central de Pedidos é uma solução tecnológica desenvolvida para empresa
 ![Interface da Aplicação](doc/img/2025_09_28_IMAGE_002.png)
 
 ### Centralização de Pedidos
-- Visualização unificada de pedidos do Shopee e Mercado Livre
+- Visualização unificada de pedidos do **Shopee**, **Mercado Livre** e **Shein**
 - Interface única para gerenciamento de múltiplos canais de venda
 - Sincronização automática de dados entre plataformas
+- **60 pedidos totais** distribuídos entre os três marketplaces
 
 ### Sistema de Busca Inteligente
 - Busca instantânea por código do pedido, nome do cliente, produto ou endereço
@@ -68,28 +69,37 @@ O script automatizado irá:
 ### Acesso ao Sistema
 - **Interface Principal**: http://localhost:5173
 - **API de Dados**: http://localhost:3001
+- **Documentação Interativa**: http://localhost:3001/api/swagger
+- **Informações da API**: http://localhost:3001/api/info
 
 ## Dados e Integração
 
 ### Fonte de Dados
 O sistema atualmente utiliza dados de demonstração que simulam pedidos reais:
 - **20 pedidos Shopee** com produtos e status variados
-- **20 pedidos Mercado Livre** com informações completas
-- Dados brasileiros realistas incluindo endereços e produtos locais
+- **20 pedidos Mercado Livre** com informações completas  
+- **20 pedidos Shein** com produtos de moda internacional
+- **Total: 60 pedidos** com dados brasileiros realistas incluindo endereços e produtos locais
 
 ### Capacidades da API
-- Endpoints REST para integração com sistemas existentes
-- Suporte a paginação para grandes volumes de dados
-- Filtros parametrizáveis para consultas específicas
-- Formato JSON padronizado para intercâmbio de dados
+- **Endpoints REST** para integração com sistemas existentes
+- **Documentação Swagger UI** interativa e completa
+- **Autenticação JWT** configurável (habilitada/desabilitada)
+- **Suporte a paginação** para grandes volumes de dados
+- **Filtros parametrizáveis** para consultas específicas
+- **Arquitetura modular** com middleware, rotas e serviços separados
+- **Formato JSON padronizado** para intercâmbio de dados
 
 ## Arquitetura Técnica
 
 ### Tecnologias Utilizadas
 - **Frontend**: React 18 com Vite para interface moderna e responsiva
-- **Backend**: Node.js com Express.js para API robusta e escalável
+- **Backend**: Node.js com Express.js em arquitetura modular
+- **Documentação**: Swagger UI com swagger-jsdoc para API interativa
+- **Autenticação**: JWT (JSON Web Tokens) configurável
 - **Dados**: Arquivos JSON estruturados (preparado para migração para banco de dados)
 - **Interface**: Tailwind CSS para design profissional e consistente
+- **Middleware**: CORS, logging e tratamento de erros centralizado
 
 ## Status dos Pedidos
 
@@ -106,11 +116,14 @@ O sistema classifica e exibe os pedidos com status codificados por cores:
 
 ## Roadmap de Desenvolvimento
 
-### Versão Atual (1.0)
-- Centralização de pedidos Shopee e Mercado Livre
-- Sistema de busca unificada
-- Dashboard com métricas básicas
-- Interface responsiva completa
+### Versão Atual (2.0)
+- **Centralização de pedidos** Shopee, Mercado Livre e Shein
+- **Sistema de busca unificada** com 60 pedidos totais
+- **Swagger UI completo** com documentação interativa
+- **Arquitetura modular** com config/, middleware/, routes/, services/
+- **Autenticação JWT** configurável
+- **Interface profissional** sem ícones infantilizados
+- **Dashboard com métricas** básicas e avançadas
 
 ### Próximas Versões
 - **Integração em Tempo Real**: Conexão direta com APIs dos marketplaces
@@ -125,6 +138,8 @@ Para desenvolvedores e administradores de sistema, consulte a documentação té
 
 - **[Guia de Instalação](doc/INSTALACAO.md)**: Configuração detalhada do ambiente
 - **[Documentação da API](doc/API.md)**: Referência completa dos endpoints
+- **[Setup da API v2.0](doc/API_V2_SETUP.md)**: Configuração da nova arquitetura
+- **[Guia do Swagger](doc/SWAGGER_GUIDE.md)**: Documentação interativa da API
 - **[Arquitetura](doc/ARQUITETURA.md)**: Visão técnica do sistema
 - **[Guia do Desenvolvedor](doc/DESENVOLVIMENTO.md)**: Informações para contribuidores
 
@@ -158,4 +173,12 @@ Consulte o arquivo [LICENSE](LICENSE) para detalhes completos dos termos e condi
 ---
 
 **Hub Central de Pedidos** - Centralize, Gerencie, Otimize  
-Versão 1.0 | Setembro 2025 | Licenciado sob MIT License
+Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
+
+### Novidades da Versão 2.0
+- **Integração Shein**: 20 novos pedidos de moda internacional
+- **Swagger UI**: Documentação interativa completa
+- **Arquitetura Modular**: Backend reorganizado e escalável
+- **JWT Authentication**: Sistema de autenticação configurável
+- **Interface Profissional**: Design limpo sem ícones infantis
+- **API Unificada**: Endpoints padronizados para todos os marketplaces

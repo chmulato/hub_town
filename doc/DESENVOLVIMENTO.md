@@ -1,4 +1,4 @@
-# Guia do Desenvolvedor - Hub Central de Pedidos
+# Guia do Desenvolvedor - Hub Central de Pedidos v2.0
 
 ## Configuração do Ambiente de Desenvolvimento
 
@@ -9,6 +9,8 @@
   - Prettier - Code formatter
   - ESLint
   - Thunder Client (para testar API)
+  - **Swagger Viewer** (para visualizar docs OpenAPI)
+  - **REST Client** (alternativa ao Thunder Client)
 
 ### Configuração do Git
 ```powershell
@@ -20,43 +22,117 @@ git config --global user.email "seu.email@exemplo.com"
 git config --global core.autocrlf true
 ```
 
-## Estrutura do Código
+## Nova Estrutura Modular v2.0
 
-### Backend (Node.js + Express)
+### Backend Modular (Node.js + Express)
 
 #### Arquivo Principal: `server.js`
 ```javascript
-// Estrutura básica
+// Nova estrutura modular
 import express from "express";
-import fs from 'fs';
-import path from 'path';
+import cors from 'cors';
+import swaggerUi from 'swagger-ui-express';
+import config from './config/config.js';
+import { swaggerSpec } from './config/swagger.js';
+
+// Importar rotas modulares
+import authRoutes from './routes/auth.js';
+import marketplaceRoutes from './routes/marketplace.js';
+import ordersRoutes from './routes/orders.js';
 
 const app = express();
-const PORT = 3001;
+const PORT = config.server.port;
 
-// Middleware stack
-app.use(cors_middleware);
+// Middleware stack v2.0
+app.use(cors(config.server.cors));
 app.use(express.json());
+app.use(logging_middleware);
 
-// Utility functions
-function loadJsonData(filename) { /* ... */ }
-function filterOrders(orders, search) { /* ... */ }
-function paginate(array, page, limit) { /* ... */ }
+// Swagger UI
+app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-// Route handlers
-app.get("/api/shopee/orders", handler);
-app.get("/api/ml/orders", handler);
-app.get("/api/orders/search", handler);
-
-app.listen(PORT, callback);
+// Modular routes
+app.use('/api/auth', authRoutes);
+app.use('/api/marketplace', marketplaceRoutes);
+app.use('/api/orders', ordersRoutes);
 ```
 
-#### Padrões de Código Backend
-- Use ES6+ modules (`import/export`)
-- Funções puras para utilities
-- Error handling com try/catch
-- Validação de parâmetros de query
-- Logs para debugging
+#### Configuração Centralizada: `config/config.js`
+```javascript
+export const config = {
+  server: {
+    port: process.env.PORT || 3001,
+    host: process.env.HOST || 'localhost',
+    cors: { /* ... */ }
+  },
+  auth: {
+    enabled: process.env.AUTH_ENABLED === 'true',
+    jwtSecret: process.env.JWT_SECRET || 'default-secret'
+  },
+  marketplaces: {
+    shopee: { enabled: true, icon: 'SHOP' },
+    mercadolivre: { enabled: true, icon: 'STORE' },
+    shein: { enabled: true, icon: 'FASHION' }
+  }
+};
+```
+
+## 📚 Desenvolvimento com Swagger UI
+
+### Configuração do Swagger: `config/swagger.js`
+```javascript
+import swaggerJsdoc from 'swagger-jsdoc';
+
+const options = {
+  definition: {
+    openapi: '3.0.0',
+    info: {
+      title: 'Hub Central de Pedidos API',
+      version: '2.0.0',
+      description: 'API unificada para gerenciamento de pedidos'
+    },
+    servers: [{ url: 'http://localhost:3001', description: 'Development' }]
+  },
+  apis: ['./routes/*.js', './server.js']
+};
+
+export const swaggerSpec = swaggerJsdoc(options);
+```
+
+### Documentando Endpoints com JSDoc
+```javascript
+/**
+ * @swagger
+ * /api/marketplace/{marketplace}/orders:
+ *   get:
+ *     summary: Obter pedidos de um marketplace
+ *     tags: [Marketplace]
+ *     parameters:
+ *       - in: path
+ *         name: marketplace
+ *         required: true
+ *         schema:
+ *           type: string
+ *           enum: [shopee, mercadolivre, shein]
+ *     responses:
+ *       200:
+ *         description: Lista de pedidos
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/OrderResponse'
+ */
+```
+
+#### Padrões de Código Backend v2.0
+- **Modularização**: Separar rotas, middleware e serviços
+- **Configuração centralizada**: Use config.js para todos os settings
+- **Documentação Swagger**: Sempre documentar novos endpoints
+- **Interface profissional**: Sem ícones emoji, usar texto descritivo
+- **ES6+ modules** (`import/export`)
+- **Error handling** com middleware centralizado
+- **Validação de parâmetros** com schemas
+- **Logs estruturados** com timestamp
 
 ### Frontend (React + Vite)
 

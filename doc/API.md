@@ -1,8 +1,8 @@
-# API Documentation - Hub Central de Pedidos
+# API Documentation - Hub Central de Pedidos v2.0
 
 ## Visão Geral
 
-A API do Hub Central de Pedidos fornece endpoints para gerenciar e consultar pedidos de diferentes marketplaces (Shopee e Mercado Livre). A API suporta paginação, filtros e busca unificada.
+A API do Hub Central de Pedidos v2.0 fornece endpoints para gerenciar e consultar pedidos de múltiplos marketplaces (**Shopee**, **Mercado Livre** e **Shein**). A API suporta paginação, filtros, busca unificada, autenticação JWT e documentação interativa Swagger.
 
 ## Base URL
 
@@ -10,22 +10,52 @@ A API do Hub Central de Pedidos fornece endpoints para gerenciar e consultar ped
 http://localhost:3001
 ```
 
-## Endpoints
+## Documentação Interativa
 
-### 1. Pedidos Shopee
+🚀 **Acesse a documentação interativa completa**: http://localhost:3001/api/swagger
 
-#### GET `/api/shopee/orders`
+A documentação Swagger UI oferece:
+- Interface interativa para testar endpoints
+- Exemplos de requisições e respostas
+- Schemas detalhados dos dados
+- Teste de autenticação JWT
+- Validação de parâmetros em tempo real
 
-Retorna pedidos do Shopee com suporte a paginação e busca.
+## Endpoints Principais
+
+### 🔧 Informações da API
+
+#### GET `/api/info`
+Retorna informações gerais sobre a API, versão e recursos disponíveis.
+
+#### GET `/api/swagger`
+Acessa a documentação interativa Swagger UI.
+
+### 🔐 Autenticação (Opcional)
+
+#### POST `/api/auth/login`
+Realiza login e obtém token JWT (quando autenticação está habilitada).
+
+#### GET `/api/auth/status`
+Verifica o status do sistema de autenticação.
+
+### 🛍️ Marketplaces Unificados
+
+#### GET `/api/marketplace`
+Lista todos os marketplaces disponíveis e suas configurações.
+
+#### GET `/api/marketplace/{marketplace}/orders`
+Retorna pedidos de um marketplace específico (shopee, mercadolivre, shein).
 
 **Parâmetros de Query:**
 - `page` (opcional): Número da página (padrão: 1)
-- `limit` (opcional): Itens por página (padrão: 5)
+- `limit` (opcional): Itens por página (padrão: 10, máximo: 100)
 - `search` (opcional): Termo de busca (busca em orderId, buyer, product, address)
+- `useRealAPI` (opcional): true/false para usar API real ou dados mock
 
 **Exemplo de Requisição:**
 ```
-GET /api/shopee/orders?page=1&limit=5&search=joão
+GET /api/marketplace/shopee/orders?page=1&limit=10&search=joão
 ```
 
 **Exemplo de Resposta:**
