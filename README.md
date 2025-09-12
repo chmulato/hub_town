@@ -91,6 +91,9 @@ O sistema inclui uma interface completa para configuração de endpoints e auten
   - **Responsabilidades** do usuário quanto à proteção de dados
   - **Validação obrigatória** - impossível salvar sem aceitar os termos
   - **Reset automático** da aceitação a cada nova configuração
+
+![Conformidade LGPD](doc/img/2025_09_28_IMAGE_004.png)
+
 ### Dashboard Executivo Aprimorado
 - Métricas consolidadas de vendas e entregas por aba
 - Indicadores de performance específicos por marketplace
