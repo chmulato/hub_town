@@ -25,6 +25,7 @@ export default function HubCD() {
   
   // Estado para controle da tela de configuração
   const [showSettings, setShowSettings] = useState(false);
+  const [lgpdAccepted, setLgpdAccepted] = useState(false);
 
   const fetchOrders = async (shopeePage = 1, mlPage = 1, sheinPage = 1) => {
     setLoading(true);
@@ -256,7 +257,10 @@ export default function HubCD() {
         <div className="flex justify-between items-center p-6 border-b">
           <h2 className="text-2xl font-bold text-gray-800">Configurações de API dos Marketplaces</h2>
           <button
-            onClick={() => setShowSettings(false)}
+            onClick={() => {
+              setShowSettings(false);
+              setLgpdAccepted(false); // Reset LGPD acceptance quando cancelar
+            }}
             className="text-gray-400 hover:text-gray-600 text-2xl"
           >
             ×
@@ -402,21 +406,94 @@ export default function HubCD() {
             </div>
           </div>
 
+          {/* LGPD Compliance Section */}
+          <div className="mb-8 p-6 bg-gray-50 border border-gray-200 rounded-lg">
+            <div className="mb-4">
+              <h3 className="text-lg font-semibold text-gray-800 mb-2">
+                📋 Ciência sobre Tratamento de Dados - LGPD
+              </h3>
+              <div className="text-sm text-gray-700 space-y-3">
+                <p className="font-medium">
+                  Ao configurar os endpoints dos marketplaces, você declara estar ciente de que:
+                </p>
+                <ul className="list-disc pl-6 space-y-2">
+                  <li>
+                    <strong>Dados Pessoais:</strong> A aplicação acessará dados pessoais de clientes dos marketplaces, 
+                    incluindo nomes, endereços, telefones e informações de pedidos.
+                  </li>
+                  <li>
+                    <strong>Base Legal:</strong> O tratamento é realizado com base no legítimo interesse para 
+                    gestão comercial e cumprimento de obrigações contratuais com os marketplaces.
+                  </li>
+                  <li>
+                    <strong>Finalidade:</strong> Os dados serão utilizados exclusivamente para gestão de pedidos, 
+                    controle de estoque e relatórios comerciais internos.
+                  </li>
+                  <li>
+                    <strong>Segurança:</strong> Você se compromete a implementar medidas técnicas e organizacionais 
+                    adequadas para proteger os dados acessados via APIs.
+                  </li>
+                  <li>
+                    <strong>Retenção:</strong> Os dados serão mantidos pelo tempo necessário para as finalidades 
+                    comerciais e conforme exigências legais.
+                  </li>
+                  <li>
+                    <strong>Direitos dos Titulares:</strong> Você reconhece a necessidade de atender aos direitos 
+                    dos titulares (acesso, correção, exclusão, portabilidade) quando solicitado.
+                  </li>
+                </ul>
+                <div className="mt-4 p-3 bg-blue-50 border border-blue-200 rounded">
+                  <p className="text-blue-800 text-sm">
+                    <strong>Importante:</strong> Esta aplicação deve ser utilizada em conformidade com a 
+                    Lei Geral de Proteção de Dados (LGPD - Lei 13.709/2018) e demais regulamentações aplicáveis.
+                  </p>
+                </div>
+              </div>
+            </div>
+            
+            <div className="flex items-start gap-3">
+              <input
+                type="checkbox"
+                id="lgpd-consent"
+                checked={lgpdAccepted}
+                onChange={(e) => setLgpdAccepted(e.target.checked)}
+                className="mt-1 h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              />
+              <label htmlFor="lgpd-consent" className="text-sm text-gray-700 cursor-pointer">
+                <strong>Declaro estar ciente</strong> das responsabilidades relacionadas ao tratamento de dados pessoais 
+                conforme a LGPD e me comprometo a utilizar esta aplicação em conformidade com a legislação vigente.
+              </label>
+            </div>
+          </div>
+
           {/* Action Buttons */}
           <div className="flex justify-end gap-4 pt-6 border-t">
             <button
-              onClick={() => setShowSettings(false)}
+              onClick={() => {
+                setShowSettings(false);
+                setLgpdAccepted(false); // Reset LGPD acceptance quando cancelar
+              }}
               className="px-6 py-2 text-gray-600 hover:text-gray-800 hover:bg-gray-100 rounded-lg transition-colors"
             >
               Cancelar
             </button>
             <button
               onClick={() => {
+                if (!lgpdAccepted) {
+                  alert('⚠️ É necessário aceitar os termos da LGPD para salvar as configurações.');
+                  return;
+                }
                 // Aqui seria implementada a lógica para salvar as configurações
-                alert('Configurações salvas com sucesso!');
+                alert('✅ Configurações salvas com sucesso!\n\n📋 Ciência LGPD registrada.');
                 setShowSettings(false);
+                setLgpdAccepted(false); // Reset para próxima configuração
               }}
-              className="px-6 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              disabled={!lgpdAccepted}
+              className={`px-6 py-2 rounded-lg transition-colors ${
+                lgpdAccepted 
+                  ? 'bg-blue-600 text-white hover:bg-blue-700' 
+                  : 'bg-gray-300 text-gray-500 cursor-not-allowed'
+              }`}
             >
               Salvar Configurações
             </button>
