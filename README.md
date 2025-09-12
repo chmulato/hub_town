@@ -201,19 +201,19 @@ hub_town/
 │   ├── middleware/      # Auth, CORS, logging, errors
 │   ├── routes/          # API routes organizadas
 │   ├── services/        # Lógica de negócio
-│   ├── data/           # JSON dos marketplaces
-│   └── server.js       # Servidor principal
-├── tests/              # Suite de testes automatizados
+│   ├── data/            # JSON dos marketplaces
+│   └── server.js        # Servidor principal
+├── tests/               # Suite de testes automatizados
 │   ├── api-integration-test.js
 │   ├── endpoint-config-test.js
-│   └── results/        # Relatórios JSON
-├── doc/               # Documentação técnica
-│   ├── ARQUITETURA.md # Documento principal completo
+│   └── results/         # Relatórios JSON
+├── doc/                 # Documentação técnica
+│   ├── ARQUITETURA.md   # Documento principal completo
 │   ├── DESENVOLVIMENTO.md
 │   ├── INSTALACAO.md
 │   ├── SWAGGER_GUIDE.md
-│   └── img/           # Imagens da documentação
-└── start.ps1          # Script de startup automatizado
+│   └── img/            # Imagens da documentação
+└── start.ps1           # Script de startup automatizado
 ```
 
 ### Tecnologias Utilizadas v2.0
@@ -311,7 +311,7 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 
 ## Principais Novidades da Versão 2.0
 
-### 🚀 **Funcionalidades Implementadas**
+### **Funcionalidades Implementadas**
 - **Sistema de Abas Organizadas**: Navegação intuitiva por marketplace com contadores dinâmicos
 - **Configuração Avançada de APIs**: Modal dedicado com 4 tipos de autenticação (API Key, OAuth 2.0, JWT, Basic Auth)
 - **Conformidade LGPD**: Implementação completa de termo de ciência para coleta e tratamento de dados
@@ -322,7 +322,7 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 - **Script de Startup Automatizado**: PowerShell script com dependency management e health monitoring
 - **Busca Contextual**: Busca inteligente por aba ativa com filtros específicos por marketplace
 
-### 📊 **Métricas de Qualidade v2.0**
+### **Métricas de Qualidade v2.0**
 - **Performance**: Startup < 30s, API response < 100ms, busca < 50ms
 - **Testes**: 48 testes automatizados com 100% de aprovação
 - **Documentação**: 100% dos endpoints documentados no Swagger UI
@@ -331,14 +331,14 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 - **Conformidade Legal**: Implementação LGPD com termo obrigatório e transparência de dados
 - **Escalabilidade**: Arquitetura preparada para APIs reais e banco de dados
 
-### 🎯 **Benefícios Empresariais**
+### **Benefícios Empresariais**
 - **Produtividade**: Interface unificada reduz tempo de gestão em 60%
 - **Flexibilidade**: Configuração personalizada de endpoints por marketplace
 - **Confiabilidade**: Testes automatizados garantem estabilidade do sistema
 - **Manutenibilidade**: Código modular facilita extensões e atualizações
 - **Escalabilidade**: Preparado para integração com APIs reais e crescimento
 
-### 🔧 **Preparação para Produção**
+### **Preparação para Produção**
 - **Database-Ready**: Migração facilitada para PostgreSQL/MongoDB
 - **API-Ready**: Estrutura preparada para integração com marketplaces reais
 - **Enterprise-Ready**: Arquitetura escalável para ambientes corporativos
