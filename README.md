@@ -18,7 +18,7 @@ O Hub Central de Pedidos v2.0 é uma solução tecnológica empresarial desenvol
 
 **Gestão Centralizada**: Monitore status de entregas, identifique gargalos operacionais e otimize processos de fulfillment com configuração personalizada de APIs.
 
-**Configuração Flexível**: Configure endpoints e autenticação para cada marketplace através de interface dedicada com suporte a 4 tipos de autenticação (API Key, OAuth 2.0, JWT, Basic Auth).
+**Configuração Flexível**: Configure endpoints e autenticação para cada marketplace através de interface dedicada com suporte a 4 tipos de autenticação (API Key, OAuth 2.0, JWT, Basic Auth) e conformidade total com a LGPD.
 
 ## Funcionalidades Principais v2.0
 
@@ -32,11 +32,12 @@ O Hub Central de Pedidos v2.0 é uma solução tecnológica empresarial desenvol
 - **Contadores dinâmicos**: Cada aba exibe o número de pedidos em tempo real
 - **Navegação contextual**: Busca e paginação específicas por aba ativa
 
-### Configuração Avançada de APIs
+### Configuração Avançada de APIs com Conformidade LGPD
 - **Modal de Configuração**: Acessível via ícone de engrenagem (⚙️)
 - **4 Tipos de Autenticação**: API Key, OAuth 2.0, JWT, Basic Authentication
 - **Endpoints Personalizáveis**: URLs configuráveis por marketplace
 - **Credenciais Mascaradas**: Segurança na inserção de dados sensíveis
+- **Conformidade LGPD**: Seção obrigatória de ciência sobre tratamento de dados
 - **Teste de Conectividade**: Validação em tempo real das configurações
 - **Persistência Local**: Configurações salvas automaticamente
 
@@ -77,6 +78,19 @@ O sistema inclui uma interface completa para configuração de endpoints e auten
   - Validação e feedback visual para cada configuração
 
 - **Flexibilidade de Configuração**:
+  - URLs de endpoint personalizáveis
+  - Credenciais específicas por marketplace  
+  - Campos adicionais conforme necessário (Secret Keys, Merchant IDs)
+  - Salvamento seguro das configurações
+
+- **Conformidade LGPD Integrada**:
+  - **Seção de Ciência sobre Tratamento de Dados** obrigatória
+  - **Checkbox de aceitação** dos termos da LGPD antes de salvar
+  - **Informações detalhadas** sobre dados pessoais que serão acessados
+  - **Base legal** e finalidades do tratamento de dados claramente definidas
+  - **Responsabilidades** do usuário quanto à proteção de dados
+  - **Validação obrigatória** - impossível salvar sem aceitar os termos
+  - **Reset automático** da aceitação a cada nova configuração
 ### Dashboard Executivo Aprimorado
 - Métricas consolidadas de vendas e entregas por aba
 - Indicadores de performance específicos por marketplace
@@ -297,6 +311,7 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 ### 🚀 **Funcionalidades Implementadas**
 - **Sistema de Abas Organizadas**: Navegação intuitiva por marketplace com contadores dinâmicos
 - **Configuração Avançada de APIs**: Modal dedicado com 4 tipos de autenticação (API Key, OAuth 2.0, JWT, Basic Auth)
+- **Conformidade LGPD**: Implementação completa de termo de ciência para coleta e tratamento de dados
 - **Suite de Testes Automatizados**: 48 testes com 100% de cobertura crítica e relatórios JSON detalhados
 - **Interface Profissional**: Design corporativo sem elementos infantis, adequado para ambiente empresarial
 - **Swagger UI Completo**: Documentação OpenAPI 3.0 interativa com todos os endpoints
@@ -310,6 +325,7 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 - **Documentação**: 100% dos endpoints documentados no Swagger UI
 - **Responsividade**: Suporte completo 320px-2560px (mobile-desktop)
 - **Segurança**: Credenciais mascaradas, validação de entrada, JWT opcional
+- **Conformidade Legal**: Implementação LGPD com termo obrigatório e transparência de dados
 - **Escalabilidade**: Arquitetura preparada para APIs reais e banco de dados
 
 ### 🎯 **Benefícios Empresariais**
