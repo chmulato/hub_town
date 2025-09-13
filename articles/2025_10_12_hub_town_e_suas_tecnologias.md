@@ -3,9 +3,6 @@
 ![Arquitetura de ingestão e leitura do Hub Town](./img/2025_10_12_IMAGE_001.png)
 <sub>Figura — Arquitetura de ingestão (Spring Boot) + mensageria (RabbitMQ) + persistência (PostgreSQL) + leitura/Frontend.</sub>
 
-![Arquitetura abstrata do Hub Town](./img/2025_10_12_IMAGE_002.png)
-<sub>Figura — Versão mais abstrata (não executiva) para ressaltar conceitos sem elementos corporativos.</sub>
-
 Quando o comércio local começa a vender em múltiplos marketplaces, a segunda-feira não perdoa: números que não batem, relatórios que chegam tarde, decisões que dependem de dados que mudam a cada F5. O Hub Town nasceu para transformar esse cenário em rotina previsível: ingestão resiliente, leitura consistente, KPIs confiáveis.
 
 Este artigo é um relato de descoberta: qual é o menor conjunto de decisões técnicas que nos dá escala, confiabilidade e clareza? E como aplicá-las, passo a passo, sem sacrificar o que já funciona no frontend?
@@ -98,8 +95,8 @@ Se quiser mergulhar nos detalhes, os documentos de apoio trazem a vista completa
 
 ## Recursos e referências
 
-- Repositório (código-fonte): https://github.com/chmulato/hub_town
-- Artigo 1 (contexto e visão inicial): https://www.caracore.com.br/personal/articles/2025_09_28_hub_local_de_integracao_para_pequenas_cidades.html
+- Repositório (código-fonte): [chmulato/hub_town](https://github.com/chmulato/hub_town)
+- Artigo 1 (contexto e visão inicial): articles/2025_09_28_hub_local_de_integracao_para_pequenas_cidades.html
 
 ## Dicionário técnico (para executivos)
 
