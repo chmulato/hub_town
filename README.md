@@ -138,6 +138,45 @@ back-end/
 
 ## Início Rápido
 
+### DB-first (modo banco) — Início rápido
+Siga estes passos para rodar a API lendo do PostgreSQL e o front-end consumindo a API via DB. Comandos abaixo são para Windows PowerShell.
+
+1) Subir o PostgreSQL via Docker
+
+```powershell
+docker-compose up -d
+```
+
+2) Inicializar o banco e migrar os dados de exemplo
+
+```powershell
+./setup-database.ps1
+```
+
+3) Iniciar o back-end em modo DB (DATA_SOURCE=db)
+
+```powershell
+cd back-end
+npm install
+$env:DATA_SOURCE = 'db'
+# (opcional) configure a porta/host:
+# $env:PORT = '3001'; $env:HOST = 'localhost'
+npm start
+```
+
+4) Iniciar o front-end apontando para a API
+
+```powershell
+cd ../front-end
+Copy-Item .env.example .env -ErrorAction SilentlyContinue
+# ajuste VITE_API_BASE_URL em .env se necessário (padrão: http://localhost:3001/api)
+npm install
+npm run dev
+```
+
+Observações:
+- Também é possível usar o script automatizado `start.ps1`. Estamos ajustando pequenas mensagens e padronizando a ativação do modo DB; por ora, o fluxo manual acima é o caminho mais direto.
+
 ### Pré-requisitos
 - Node.js 18+ 
 - npm ou yarn
@@ -166,6 +205,25 @@ O script automaticamente:
 - **Especificação OpenAPI**: http://localhost:3001/api/swagger.json
 - **Informações da API**: http://localhost:3001/api/info
 
+### Variáveis de Ambiente
+
+Backend (`back-end/.env` ou variáveis de sessão PowerShell):
+- `DATA_SOURCE` — Fonte de dados: `mock` | `db` | `api` (padrão: `mock`)
+- `PORT`, `HOST` — Porta e host do servidor (padrões: 3001, localhost)
+- `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` — Configs do Postgres
+- `AUTH_ENABLED` — Habilita autenticação JWT (true/false)
+- `JWT_SECRET`, `TOKEN_EXPIRY` — Chave e validade do token
+
+Frontend (`front-end/.env`):
+- `VITE_API_BASE_URL` — Base da API (padrão sugerido: `http://localhost:3001/api`)
+
+Um arquivo de exemplo foi incluído: `front-end/.env.example`.
+
+### Modos de Fonte de Dados (DATA_SOURCE)
+- `mock` (padrão): Endpoints servem dados de arquivos JSON locais (cenário de demonstração).
+- `db`: Endpoints de leitura usam PostgreSQL; a aba “Todos” utiliza `/orders/search` e contadores vêm do `total` retornado pela API. Estatísticas via `/orders/stats` são agregadas por SQL.
+- `api`: (planejado) Integração com APIs reais dos marketplaces. Enquanto não configurado, há fallback para mocks.
+
 ## Dados e Integração
 
 ### Fonte de Dados
@@ -187,33 +245,82 @@ O sistema atualmente utiliza dados de demonstração que simulam pedidos reais:
 - **Busca unificada** com endpoints dedicados por aba
 - **Configuração dinâmica** de endpoints via interface web
 
+### Solução de Problemas (Troubleshooting)
+- Docker não está rodando: abra o Docker Desktop antes de `docker-compose up -d`.
+- Banco não conecta: confirme `hubtown_postgres` ativo e credenciais em `.env` do backend (ou variáveis de sessão) batendo com `docker-compose.yml`.
+- Portas em uso: backend (3001) e frontend (5173) — finalize processos nessas portas ou ajuste `PORT`/`Vite`.
+- Migração repetida/erros: o script de migração ignora duplicatas básicas; se necessário, derrube e suba novamente o container e reexecute `./setup-database.ps1`.
+- CORS: o backend já libera `http://localhost:5173`; ajuste `config.server.cors.origins` se usar outra origem.
+
 ## Arquitetura Técnica Detalhada
 
 ### Estrutura do Projeto
 ```
 hub_town/
-├── front-end/           # React 18 + Vite + Tailwind
-│   ├── src/
-│   │   └── front.jsx    # Componente principal com abas
-│   └── package.json
-├── back-end/            # Node.js + Express modular
-│   ├── config/          # Configurações centralizadas
-│   ├── middleware/      # Auth, CORS, logging, errors
-│   ├── routes/          # API routes organizadas
-│   ├── services/        # Lógica de negócio
-│   ├── data/            # JSON dos marketplaces
-│   └── server.js        # Servidor principal
-├── tests/               # Suite de testes automatizados
-│   ├── api-integration-test.js
-│   ├── endpoint-config-test.js
-│   └── results/         # Relatórios JSON
-├── doc/                 # Documentação técnica
-│   ├── ARQUITETURA.md   # Documento principal completo
+├── docker-compose.yml                 # Postgres via Docker
+├── start.ps1                          # Orquestra startup (Windows)
+├── setup-database.ps1                 # Inicializa DB e migra JSON
+├── README.md                          # Visão geral e quick start
+├── LICENSE
+├── back-end/                          # API Node/Express
+│   ├── package.json
+│   ├── server.js                      # Entrypoint Express
+│   ├── migrate-json-data.js           # Migração de JSONs para DB
+│   ├── config/
+│   │   ├── config.js                  # Config central (DATA_SOURCE etc.)
+│   │   ├── database.js                # Pool pg e helpers
+│   │   └── swagger.js                 # OpenAPI/Swagger spec
+│   ├── middleware/
+│   │   └── auth.js                    # JWT condicional
+│   ├── routes/
+│   │   ├── auth.js
+│   │   ├── marketplace.js
+│   │   └── orders.js
+│   ├── services/
+│   │   └── marketplaceService.js      # Leitura Mock/DB/API
+│   └── data/
+│       ├── mercadolivre-orders.json
+│       ├── shein-orders.json
+│       └── shopee-orders.json
+├── front-end/                         # UI React/Vite
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── tailwind.config.js
+│   ├── postcss.config.js
+│   ├── index.html
+│   ├── .env.example                   # VITE_API_BASE_URL
+│   ├── front.jsx                      # UI principal (abas)
+│   └── src/
+│       ├── main.jsx                   # Mount React
+│       └── index.css                  # Styles
+├── database/                          # Scripts e SQL do Postgres
+│   ├── schema.sql
+│   ├── seeds.sql
+│   ├── init-db.ps1
+│   └── init-db.sh
+├── doc/                               # Documentação
+│   ├── ARQUITETURA.md
+│   ├── DATABASE_SETUP.md
 │   ├── DESENVOLVIMENTO.md
 │   ├── INSTALACAO.md
+│   ├── PLANO_DE_ACAO.md
+│   ├── SETUP_SUMMARY.md
 │   ├── SWAGGER_GUIDE.md
-│   └── img/            # Imagens da documentação
-└── start.ps1           # Script de startup automatizado
+│   └── img/
+│       ├── 2025_09_28_IMAGE_001.png
+│       ├── 2025_09_28_IMAGE_002.png
+│       ├── 2025_09_28_IMAGE_003.png
+│       └── 2025_09_28_IMAGE_004.png
+└── tests/                             # Scripts de testes e exemplos
+  ├── README.md
+  ├── api-integration-test.js
+  ├── endpoint-config-test.js
+  ├── ENDPOINT_CONFIG_TEST.md
+  ├── results/
+  └── scripts/
+    ├── run-all-tests.js
+    ├── run-endpoint-config-test.js
+    └── test-config.js
 ```
 
 ### Tecnologias Utilizadas v2.0
@@ -360,17 +467,18 @@ Todos os documentos técnicos específicos estão organizados na pasta `doc/`:
 
 ```
 C:\dev\hub_town\doc\
-├── ARQUITETURA.md       # Arquitetura detalhada do sistema
-├── DATABASE_SETUP.md    # Configuração PostgreSQL com Docker
-├── DESENVOLVIMENTO.md   # Guia para desenvolvedores
-├── INSTALACAO.md        # Guia completo de instalação
-├── SETUP_SUMMARY.md     # Resumo da configuração
-├── SWAGGER_GUIDE.md     # Documentação da API e OpenAPI 3.0
-└── img/                 # Imagens e diagramas
-    ├── 2025_09_28_IMAGE_001.png
-    ├── 2025_09_28_IMAGE_002.png
-    ├── 2025_09_28_IMAGE_003.png
-    └── 2025_09_28_IMAGE_004.png
+├── ARQUITETURA.md                # Arquitetura detalhada do sistema
+├── DATABASE_SETUP.md             # Configuração PostgreSQL com Docker
+├── DESENVOLVIMENTO.md            # Guia para desenvolvedores
+├── INSTALACAO.md                 # Guia completo de instalação
+├── PLANO_DE_ACAO.md              # Plano de Ação DB-first (status e próximos ├── SETUP_SUMMARY.md              # Resumo da configuração
+├── SWAGGER_GUIDE.md              # Documentação da API e OpenAPI 3.0
+passos)
+└── img/                          # Imagens e diagramas
+    ├── 2025_09_28_IMAGE_001.png  # Imagem ilustrativa
+    ├── 2025_09_28_IMAGE_002.png  # Imagem do projeto
+    ├── 2025_09_28_IMAGE_003.png  # Imagem do projeto
+    └── 2025_09_28_IMAGE_004.png  # Imagem do projeto
 ```
 
 ### Fluxo de Leitura Recomendado
@@ -390,6 +498,7 @@ C:\dev\hub_town\doc\
 1. [doc/DATABASE_SETUP.md](doc/DATABASE_SETUP.md) - PostgreSQL com Docker
 2. [doc/SWAGGER_GUIDE.md](doc/SWAGGER_GUIDE.md) - APIs e documentação
 3. [doc/SETUP_SUMMARY.md](doc/SETUP_SUMMARY.md) - Resumo da configuração
+4. [doc/PLANO_DE_ACAO_01.md](doc/PLANO_DE_ACAO_01.md) - Plano de Ação DB-first (progresso e próximos passos)
 
 ### Benefícios desta Organização
 - **Ponto de entrada único**: Este README.md contém toda informação essencial
