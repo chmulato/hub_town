@@ -38,21 +38,57 @@ Verificar se todos os tipos de autenticação suportados pelo sistema funcionam 
 ## Como Executar
 
 ### Executar apenas este teste:
+PowerShell (Windows):
+```powershell
+cd tests
+node .\endpoint-config-test.js
+```
+
+Bash:
 ```bash
 cd tests
 node endpoint-config-test.js
 ```
 
 ### Executar via script auxiliar:
+PowerShell (Windows):
+```powershell
+cd tests\scripts
+node .\run-endpoint-config-test.js
+```
+
+Bash:
 ```bash
 cd tests/scripts
 node run-endpoint-config-test.js
 ```
 
 ### Executar junto com todos os testes:
+PowerShell (Windows):
+```powershell
+cd tests\scripts
+node .\run-all-tests.js
+```
+
+Bash:
 ```bash
 cd tests/scripts
 node run-all-tests.js
+```
+
+### Runner completo (sobe backend em DB e roda a suíte)
+
+Use o orquestrador para iniciar o backend (DATA_SOURCE=db), aguardar readiness e executar a suíte completa:
+
+PowerShell (Windows):
+```powershell
+cd .
+node .\tests\scripts\run-with-server.js
+```
+
+Bash:
+```bash
+node tests/scripts/run-with-server.js
 ```
 
 ## Configurações de Teste
@@ -142,9 +178,14 @@ O teste gera relatórios detalhados salvos em `tests/results/`:
 
 ## Integração com Interface
 
-Este teste complementa a interface visual de configuração, validando que:
+ Este teste complementa a interface visual de configuração, validando que:
 
 - Os campos do formulário capturam dados corretos
 - A validação frontend está alinhada com os requisitos
 - Os tipos de autenticação são implementados corretamente
 - As configurações podem ser persistidas com segurança
+
+## Observações
+
+- A simulação de conectividade possui uma pequena aleatoriedade (~10% de falha simulada) para testar tratamento de erros; rode novamente se necessário para confirmar estabilidade geral.
+- O arquivo `endpoint-config-test.js` usa ESM. Em versões antigas do Node, garanta `"type": "module"` onde necessário (já configurado no projeto) ou execute com Node 18+.
