@@ -39,7 +39,7 @@ app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec, {
   swaggerOptions: {
     persistAuthorization: true,
     displayRequestDuration: true,
-    docExpansion: 'tag',
+    docExpansion: 'list',
     filter: true,
     showExtensions: true,
     showCommonExtensions: true
@@ -73,7 +73,8 @@ app.get('/api/info', (req, res) => {
       marketplaces: Object.keys(config.marketplaces).filter(key => config.marketplaces[key].enabled),
       pagination: true,
       search: true,
-      realAPI: true
+      realAPI: config.data.source === 'api',
+      dataSource: config.data.source
     },
     documentation: '/api/swagger'
   });

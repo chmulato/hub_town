@@ -3,6 +3,10 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 export const config = {
+  // Fonte de dados (mock | db | api)
+  data: {
+    source: process.env.DATA_SOURCE || 'mock'
+  },
   // Configurações do servidor
   server: {
     port: process.env.PORT || 3001,

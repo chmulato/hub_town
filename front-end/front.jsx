@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 
 export default function HubCD() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
   const [shopeeOrders, setShopeeOrders] = useState([]);
   const [mlOrders, setMlOrders] = useState([]);
   const [sheinOrders, setSheinOrders] = useState([]);
@@ -33,9 +34,9 @@ export default function HubCD() {
     
     try {
       const [shopeeRes, mlRes, sheinRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/marketplace/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/marketplace/mercadolivre/orders?page=${mlPage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/marketplace/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
+        fetch(`${API_BASE}/marketplace/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
+        fetch(`${API_BASE}/marketplace/mercadolivre/orders?page=${mlPage}&limit=${itemsPerPage}`),
+        fetch(`${API_BASE}/marketplace/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
       ]);
 
       if (!shopeeRes.ok || !mlRes.ok || !sheinRes.ok) {
@@ -70,7 +71,7 @@ export default function HubCD() {
       });
       
       // Calcular estatísticas baseadas no total de todos os dados
-      const totalOrders = shopeeResponse.total + mlResponse.total + sheinResponse.total;
+  const totalOrders = (shopeeResponse.total || 0) + (mlResponse.total || 0) + (sheinResponse.total || 0);
       const totalShipped = Math.floor(totalOrders * 0.4); // Estimativa
       const totalPending = totalOrders - totalShipped;
       
@@ -114,7 +115,7 @@ export default function HubCD() {
     setIsSearching(true);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/orders/search?search=${encodeURIComponent(searchTerm)}&page=${page}&limit=10`);
+  const response = await fetch(`${API_BASE}/orders/search?search=${encodeURIComponent(searchTerm)}&page=${page}&limit=10`);
       
       if (!response.ok) {
         throw new Error('Erro ao buscar pedidos');
