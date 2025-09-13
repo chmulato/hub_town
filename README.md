@@ -471,9 +471,9 @@ C:\dev\hub_town\doc\
 ├── DATABASE_SETUP.md             # Configuração PostgreSQL com Docker
 ├── DESENVOLVIMENTO.md            # Guia para desenvolvedores
 ├── INSTALACAO.md                 # Guia completo de instalação
-├── PLANO_DE_ACAO.md              # Plano de Ação DB-first (status e próximos ├── SETUP_SUMMARY.md              # Resumo da configuração
-├── SWAGGER_GUIDE.md              # Documentação da API e OpenAPI 3.0
-passos)
+├── PLANO_DE_ACAO.md              # Plano de Ação DB-first (status e próximos
+├── SETUP_SUMMARY.md              # Resumo da configuração
+├── SWAGGER_GUIDE.md              # Documentação da API e OpenAPI 3.0 passos)
 └── img/                          # Imagens e diagramas
     ├── 2025_09_28_IMAGE_001.png  # Imagem ilustrativa
     ├── 2025_09_28_IMAGE_002.png  # Imagem do projeto
