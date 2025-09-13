@@ -1,6 +1,6 @@
 # Teste de Configuração de Endpoints
 
-Este teste valida a funcionalidade da tela de configuração de endpoints e autenticação do Hub Central v2.0.
+Este teste valida a funcionalidade da tela de configuração de endpoints e autenticação do Hub Town.
 
 ## Objetivo
 
@@ -76,13 +76,12 @@ cd tests/scripts
 node run-all-tests.js
 ```
 
-### Runner completo (sobe backend em DB e roda a suíte)
+### Runner completo (recomendado)
 
 Use o orquestrador para iniciar o backend (DATA_SOURCE=db), aguardar readiness e executar a suíte completa:
 
 PowerShell (Windows):
 ```powershell
-cd .
 node .\tests\scripts\run-with-server.js
 ```
 
@@ -189,3 +188,8 @@ O teste gera relatórios detalhados salvos em `tests/results/`:
 
 - A simulação de conectividade possui uma pequena aleatoriedade (~10% de falha simulada) para testar tratamento de erros; rode novamente se necessário para confirmar estabilidade geral.
 - O arquivo `endpoint-config-test.js` usa ESM. Em versões antigas do Node, garanta `"type": "module"` onde necessário (já configurado no projeto) ou execute com Node 18+.
+
+## Referências
+
+- Visão geral dos testes e execução: [`tests/README.md`](./README.md)
+- Orquestradores: `tests/scripts/run-with-server.js`, `tests/scripts/run-all-tests.js`

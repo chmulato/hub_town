@@ -58,373 +58,277 @@ app.use('/api/orders', ordersRoutes);
 ```
 
 #### Configuração Centralizada: `config/config.js`
-```javascript
-export const config = {
-  server: {
-    port: process.env.PORT || 3001,
-    host: process.env.HOST || 'localhost',
-    cors: { /* ... */ }
-  },
-  auth: {
-    enabled: process.env.AUTH_ENABLED === 'true',
-    jwtSecret: process.env.JWT_SECRET || 'default-secret'
-  },
-  marketplaces: {
-    shopee: { enabled: true, icon: 'SHOP' },
-    mercadolivre: { enabled: true, icon: 'STORE' },
-    shein: { enabled: true, icon: 'FASHION' }
-  }
-};
+# Guia do Desenvolvedor — Arquitetura com Spring Boot, RabbitMQ e PostgreSQL
+
+Este guia descreve como desenvolver no Hub Central de Pedidos assumindo a arquitetura em que:
+- As integrações com marketplaces são consumidas por um serviço de backend em Spring Boot.
+- Os eventos e dados de pedidos trafegam por uma fila mensageria (RabbitMQ) para desacoplar ingestão e persistência.
+- A persistência é feita no banco de dados PostgreSQL, que torna-se a fonte única de verdade para leitura.
+- O frontend consome somente os dados consolidados do banco via API interna de leitura (sem chamadas diretas aos marketplaces).
+
+O objetivo é garantir robustez, escalabilidade e consistência, permitindo que o frontend opere sobre dados normalizados e estáveis, enquanto a ingestão lida com variações e picos das APIs externas.
+
+## Tecnologias e Ferramentas
+
+- Backend de Ingestão: Spring Boot (Java/Kotlin), clients HTTP, schedulers, validação.
+- Mensageria: RabbitMQ (exchanges, filas, routing keys, DLQ, TTL/retry).
+- Persistência: PostgreSQL (modelo relacional, índices, constraints, migrações).
+- API de Leitura: Serviço interno para consultas paginadas, busca unificada e estatísticas.
+- Frontend: React + Vite (UI), consumo de API via base URL configurável.
+- Contêineres e Orquestração: Docker/Docker Compose para ambientes locais.
+- Observabilidade: logs estruturados, métricas, dashboards e tracing distribuído (quando disponível).
+- Autenticação/Autorização: mecanismo a definir para a API de leitura (ex.: JWT, OAuth2 Resource Server).
+
+## Visão Geral da Arquitetura
+
+- Ingestão (Spring Boot): componentes responsáveis por autenticação, agendamento de polling e/ou recepção de webhooks dos marketplaces, normalização de payloads e publicação de mensagens na fila.
+- Mensageria (RabbitMQ): exchanges, filas, roteamento por marketplace/tipo de evento e dead-letter para reprocessamento seguro.
+- Persistência (Spring Boot Consumers): consumidores que processam mensagens da fila, aplicam validações/transformações e gravam entidades no PostgreSQL.
+- Banco de Dados (PostgreSQL): modelo relacional com entidades de pedidos, compradores, endereços, histórico de status e metadados de marketplaces.
+- API de Leitura: camada de serviço para consulta paginada, busca unificada e estatísticas, sempre a partir do banco.
+- Frontend (React/Vite): UI que consome a API de leitura para listar, pesquisar e visualizar métricas; nunca acessa marketplaces diretamente.
+
+### Diagrama de Topologia (alto nível)
+
+```mermaid
+flowchart LR
+  subgraph Marketplaces
+    M1[Shopee API]
+    M2[Mercado Livre API]
+    M3[Shein API]
+  end
+
+  subgraph Ingestao[Ingestão - Spring Boot]
+    I1[Adapters/Clients]
+    I2[Polling Schedulers]
+    I3[Webhooks (quando suportado)]
+    I4[Normalização]
+  end
+
+  subgraph MQ[RabbitMQ]
+    Q1[(Exchange Pedidos)]
+    Q2[(Filas por marketplace/tipo)]
+    Q3[(DLQ)]
+  end
+
+  subgraph Persistencia[Consumers - Spring Boot]
+    C1[Consumers]
+    C2[Idempotência/UPSERT]
+  end
+
+  subgraph DB[(PostgreSQL)]
+    D1[(orders)]
+    D2[(buyers)]
+    D3[(addresses)]
+    D4[(order_status_history)]
+    D5[(marketplaces)]
+  end
+
+  subgraph API[API de Leitura]
+    A1[Listagem por Marketplace]
+    A2[Busca Unificada]
+    A3[Estatísticas]
+  end
+
+  subgraph FE[Frontend]
+    F1[UI Abas/Busca/KPIs]
+  end
+
+  M1 --> I1
+  M2 --> I1
+  M3 --> I1
+  I2 --> I1
+  I3 --> I4
+  I1 --> I4
+  I4 --> Q1
+  Q1 --> Q2
+  Q2 --> C1
+  C1 --> C2
+  C2 --> DB
+  API --> DB
+  FE --> API
 ```
 
-## 📚 Desenvolvimento com Swagger UI
+### Diagramas de Sequência
 
-### Configuração do Swagger: `config/swagger.js`
-```javascript
-import swaggerJsdoc from 'swagger-jsdoc';
+Ingestão → Fila → Consumer → Banco:
 
-const options = {
-  definition: {
-    openapi: '3.0.0',
-    info: {
-      title: 'Hub Central de Pedidos API',
-      version: '2.0.0',
-      description: 'API unificada para gerenciamento de pedidos'
-    },
-    servers: [{ url: 'http://localhost:3001', description: 'Development' }]
-  },
-  apis: ['./routes/*.js', './server.js']
-};
+```mermaid
+sequenceDiagram
+  autonumber
+  participant MP as Marketplace API
+  participant IN as Ingestão (Spring Boot)
+  participant MQ as RabbitMQ
+  participant CO as Consumer (Spring Boot)
+  participant DB as PostgreSQL
 
-export const swaggerSpec = swaggerJsdoc(options);
+  IN->>MP: Polling/Recepção de Webhook
+  MP-->>IN: Pedido/Atualização normalizada
+  IN->>MQ: Publicar mensagem (schema canônico)
+  MQ-->>CO: Entregar mensagem
+  CO->>DB: UPSERT entidades + persistir pedido/status
+  DB-->>CO: OK
 ```
 
-### Documentando Endpoints com JSDoc
-```javascript
-/**
- * @swagger
- * /api/marketplace/{marketplace}/orders:
- *   get:
- *     summary: Obter pedidos de um marketplace
- *     tags: [Marketplace]
- *     parameters:
- *       - in: path
- *         name: marketplace
- *         required: true
- *         schema:
- *           type: string
- *           enum: [shopee, mercadolivre, shein]
- *     responses:
- *       200:
- *         description: Lista de pedidos
- *         content:
- *           application/json:
- *             schema:
- *               $ref: '#/components/schemas/OrderResponse'
- */
+Frontend → API de Leitura → Banco:
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant FE as Frontend
+  participant API as API de Leitura
+  participant DB as PostgreSQL
+
+  FE->>API: GET pedidos (filtros/paginação)
+  API->>DB: SELECTs otimizados
+  DB-->>API: Linhas + total
+  API-->>FE: Dados + metadados (total/páginas)
 ```
 
-#### Padrões de Código Backend v2.0
-- **Modularização**: Separar rotas, middleware e serviços
-- **Configuração centralizada**: Use config.js para todos os settings
-- **Documentação Swagger**: Sempre documentar novos endpoints
-- **Interface profissional**: Sem ícones emoji, usar texto descritivo
-- **ES6+ modules** (`import/export`)
-- **Error handling** com middleware centralizado
-- **Validação de parâmetros** com schemas
-- **Logs estruturados** com timestamp
+## Fluxos Principais
 
-### Frontend (React + Vite)
+1) Ingestão
+- Autenticação com cada marketplace conforme especificação (OAuth, API Key, etc.).
+- Pull (polling) e/ou Push (webhooks) de pedidos e atualizações.
+- Normalização de atributos (status, IDs de pedidos, campos de endereço, comprador, produto).
+- Publicação de mensagens no RabbitMQ com schema padronizado.
 
-#### Componente Principal: `front.jsx`
-```jsx
-// Estrutura do componente
-export default function HubCD() {
-  // Estados
-  const [state, setState] = useState(initialValue);
-  
-  // Effects
-  useEffect(() => {
-    // Side effects
-  }, [dependencies]);
-  
-  // Event handlers
-  const handleEvent = (params) => {
-    // Event logic
-  };
-  
-  // Render
-  return (
-    <div>
-      {/* JSX */}
-    </div>
-  );
-}
-```
+2) Persistência
+- Consumers Spring Boot leem as mensagens e aplicam idempotência (evitar duplicidade por chave natural por marketplace).
+- UPSERT de entidades relacionadas (comprador, endereço) e inserção/atualização de pedidos e histórico de status.
+- Tratamento de erros com DLQ e métricas de reprocessamento.
 
-#### Padrões de Código Frontend
-- Functional components com Hooks
-- Estados separados por responsabilidade
-- Event handlers descritivos
-- Conditional rendering
-- Loading e error states
+3) Consulta
+- API de leitura realiza queries no PostgreSQL para fornecer:
+  - Listagem por marketplace com paginação e filtros de busca.
+  - Busca unificada de pedidos de todos os marketplaces.
+  - Estatísticas agregadas (por marketplace, por status, totais).
+- Frontend consome essas rotas, exibindo contadores, abas por marketplace e visão "Todos" unificada.
 
-## Convenções de Código
+## Componentes e Responsabilidades
 
-### Nomenclatura
+- Spring Boot — Ingestão
+  - Clientes/Adapters por marketplace (credenciais, endpoints, backoff, retry).
+  - Agenda de polling e controladores de webhooks (quando suportado).
+  - Normalização de dados e publicação em RabbitMQ.
 
-#### JavaScript/React
-```javascript
-// Variáveis e funções: camelCase
-const userName = "João";
-const fetchUserData = () => {};
+- RabbitMQ
+  - Exchanges por domínio (por exemplo, pedidos) e roteamento por marketplace/tipo.
+  - Filas de processamento e Dead-Letter Queues.
+  - Políticas de TTL, retry e visibilidade de métricas.
 
-// Componentes: PascalCase
-const UserProfile = () => {};
+- Spring Boot — Consumers
+  - Leitura das filas, validações e orquestração de persistência.
+  - Idempotência por chave composta (marketplace + original_order_id).
+  - Registro de histórico de status e consistência referencial.
 
-// Constantes: UPPER_SNAKE_CASE
-const API_BASE_URL = "http://localhost:3001";
+- PostgreSQL
+  - Tabelas de marketplaces, orders, buyers, addresses, order_status_history.
+  - Índices para busca (por buyer, produto, status, datas) e paginação eficiente.
+  - Restrições de integridade e chaves naturais onde aplicável.
 
-// Arquivos: kebab-case ou PascalCase
-user-profile.jsx
-UserProfile.jsx
-```
+- API de Leitura
+  - Rotas para listagem por marketplace, busca unificada e estatísticas.
+  - Paginação padrão (limit/page) e metadados (total, currentPage, totalPages).
+  - Respostas normalizadas (status em formato padronizado; identificadores consistentes).
 
-#### CSS/Tailwind
-```css
-/* Classes: kebab-case */
-.user-profile { }
-.nav-item { }
+- Frontend
+  - Consome exclusivamente a API interna de leitura.
+  - Abas por marketplace e visão unificada, com contadores e KPIs derivados da API de estatísticas.
+  - Base de URL configurável por variável de ambiente, sem URLs fixas no código.
 
-/* Tailwind: utility classes */
-bg-blue-500 text-white rounded-lg
-```
+## Convenções e Padrões
 
-### Estrutura de Commits
-```
-tipo(escopo): descrição
+- Contratos de Mensagens
+  - Definir um schema canônico para eventos de pedidos (ex.: campos obrigatórios, status normalizados, timestamps).
+  - Versionamento de mensagens para evoluções sem quebra.
 
-feat(api): adicionar endpoint de busca unificada
-fix(frontend): corrigir erro de paginação
-docs(readme): atualizar instruções de instalação
-style(css): melhorar responsividade do header
-refactor(utils): otimizar função de filtros
-test(api): adicionar testes para endpoints
-```
+- Contratos de API (Leitura)
+  - Campos de paginação e contagem padronizados.
+  - Filtros de busca consistentes (buyer, produto, status, datas).
+  - Documentação OpenAPI e exemplos alinhados ao payload persistido.
 
-## Desenvolvimento de Features
+- Observabilidade
+  - Log estruturado com correlação (trace/Span IDs entre ingestão, fila e persistência).
+  - Métricas por marketplace (taxa de eventos, erros, latências, retries).
+  - Dashboards para filas (backlog, DLQ) e banco (taxas de leitura/escrita, locks).
 
-### Adicionando Novo Endpoint
+- Resiliência e Qualidade
+  - Retry exponencial na ingestão e nos consumers conforme categoria de erro.
+  - Circuit breakers para integrações externas.
+  - Idempotência e consistência eventual claramente documentadas.
 
-1. **Backend** - Adicionar em `server.js`:
-```javascript
-app.get("/api/novo-endpoint", (req, res) => {
-  try {
-    // Lógica do endpoint
-    const result = processData();
-    res.json(result);
+- Segurança
+  - Gestão de segredos via variáveis de ambiente/secret manager.
+  - Sanitização de logs e mascaramento de dados sensíveis.
+  - Autenticação/autorização da API de leitura (quando habilitada).
+
+## Ambientes e Configuração
+
+- Dependências de Infraestrutura
+  - PostgreSQL acessível na rede local de desenvolvimento.
+  - RabbitMQ em contêiner local para filas e DLQs, com painel de administração.
+  - Serviço Spring Boot para ingestão e consumo.
+
+- Variáveis de Ambiente (exemplos de categorias)
+  - Banco de dados: host, porta, nome, usuário, senha, pool.
+  - RabbitMQ: URL, exchanges, filas e chaves de roteamento.
+  - Marketplaces: base URLs, credenciais, escopos, callbacks.
+  - API de leitura: porta, CORS, logging, flags de recursos.
+
+- Dados de Referência
+  - Marketplaces pré-cadastrados na tabela de referência.
+  - Seeds para ambientes de desenvolvimento, quando aplicável.
+
+## Fluxo de Desenvolvimento
+
+- Planejar a evolução de contratos (mensagens e respostas) antes de alterar consumidores e frontend.
+- Implementar/adaptar adapters por marketplace e validar o ciclo completo até o DB via fila.
+- Verificar paginação, busca e estatísticas na API de leitura contra dados do banco.
+- Garantir que o frontend consome apenas a API de leitura, com variáveis de ambiente para base URL.
+
+## Testes e Qualidade
+
+- Testes de Unidade
+  - Normalização de payloads e mapeamentos por marketplace.
+  - Regras de idempotência e validações de domínio.
+
+- Testes de Integração
+  - Publicação/consumo de mensagens (RabbitMQ) ponta a ponta.
+  - Persistência no PostgreSQL e leitura via API.
+
+- Testes de Contrato
+  - Schemas das mensagens e das respostas HTTP documentados e validados automaticamente.
+
+- Testes do Frontend
+  - Estados de carregamento/erro e paginação unificada.
+  - KPIs alimentados pela API de estatísticas.
+
+## Observabilidade e Troubleshooting
+
+- Rastreabilidade ponta a ponta (ingestão → fila → consumer → DB → leitura).
+- Alarmes para DLQ, backlog elevado, falhas de autenticação e picos de latência.
+- Playbooks de reprocessamento e limpeza de mensagens problemáticas.
+
+## Deploy e Operação
+
+- Pipelines
+  - Build/test para serviços Spring Boot e API de leitura.
+  - Verificações de migração de banco e compatibilidade de contratos.
+
+- Estratégia de Rollout
+  - Habilitação gradual por marketplace/rota.
+  - Feature flags para alternar ingestão/persistência por origem.
+
+- Backup e Retenção
+  - Políticas de backup do PostgreSQL e retenção de mensagens históricas conforme necessidades de auditoria.
+
+## Notas de Transição
+
+- Enquanto os serviços Spring Boot são desenvolvidos, a API de leitura existente pode continuar operando desde que mantenha os contratos de resposta documentados.
+- O frontend não requer alterações estruturais desde que a API de leitura preserve os campos de paginação, busca e estatísticas acordados.
+
+---
+
+Este documento se concentra em diretrizes e processos, sem exemplos de código, para orientar o desenvolvimento consistente na arquitetura baseada em Spring Boot, RabbitMQ e PostgreSQL.
   } catch (error) {
-    console.error('Erro:', error);
-    res.status(500).json({ error: 'Erro interno' });
-  }
-});
-```
-
-2. **Frontend** - Adicionar função de fetch:
-```javascript
-const fetchNewData = async () => {
-  try {
-    const response = await fetch('http://localhost:3001/api/novo-endpoint');
-    const data = await response.json();
-    setData(data);
-  } catch (error) {
-    setError(error.message);
-  }
-};
-```
-
-### Adicionando Novo Componente
-
-1. **Criar componente**:
-```jsx
-const NovoComponente = ({ prop1, prop2, onEvent }) => {
-  const [localState, setLocalState] = useState(null);
-  
-  return (
-    <div className="component-container">
-      {/* Conteúdo */}
-    </div>
-  );
-};
-```
-
-2. **Integrar no componente pai**:
-```jsx
-<NovoComponente 
-  prop1={value1}
-  prop2={value2}
-  onEvent={handleEvent}
-/>
-```
-
-## Testing
-
-### Testes da API (Manual)
-```powershell
-# Usar curl ou Invoke-RestMethod
-Invoke-RestMethod -Uri "http://localhost:3001/api/shopee/orders" -Method GET
-
-# Ou usar Thunder Client no VS Code
-GET http://localhost:3001/api/shopee/orders?page=1&limit=5
-```
-
-### Testes Frontend (Manual)
-1. Testar estados de loading
-2. Testar estados de erro
-3. Testar interações do usuário
-4. Testar responsividade
-
-### Testes Automatizados (Futuros)
-```javascript
-// Jest para backend
-describe('API Endpoints', () => {
-  test('should return shopee orders', async () => {
-    // Test implementation
-  });
-});
-
-// React Testing Library para frontend
-import { render, screen } from '@testing-library/react';
-
-test('renders order list', () => {
-  render(<HubCD />);
-  expect(screen.getByText('Hub Central')).toBeInTheDocument();
-});
-```
-
-## Debugging
-
-### Backend Debugging
-```javascript
-// Console logs estratégicos
-console.log('Request params:', req.query);
-console.log('Filtered orders:', filteredOrders.length);
-
-// Error logging
-console.error('Database error:', error);
-
-// Node.js debugger
-node --inspect server.js
-```
-
-### Frontend Debugging
-```javascript
-// React DevTools
-// Console logs
-console.log('Current state:', { orders, loading, error });
-
-// Network tab para requisições
-// Elements tab para CSS
-```
-
-## Performance
-
-### Backend Optimization
-- Cache de arquivos JSON em memória
-- Pagination eficiente
-- Filtros otimizados
-- Compression middleware
-
-### Frontend Optimization
-- Debounce na busca
-- Lazy loading
-- Memoização de componentes
-- Virtual scrolling para listas grandes
-
-## Deployment
-
-### Preparação para Produção
-
-#### Backend
-```javascript
-// Variáveis de ambiente
-const PORT = process.env.PORT || 3001;
-const NODE_ENV = process.env.NODE_ENV || 'development';
-
-// CORS específico
-res.header('Access-Control-Allow-Origin', 'https://meudominio.com');
-
-// Rate limiting
-const rateLimit = require('express-rate-limit');
-app.use(rateLimit({ windowMs: 15 * 60 * 1000, max: 100 }));
-```
-
-#### Frontend
-```powershell
-# Build para produção
-npm run build
-
-# Preview do build
-npm run preview
-```
-
-## Troubleshooting Comum
-
-### Problemas de CORS
-```javascript
-// Verificar headers no DevTools
-// Confirmar configuração no servidor
-// Testar endpoints diretamente
-```
-
-### Problemas de Estado
-```javascript
-// Verificar dependências do useEffect
-// Console.log dos estados
-// React DevTools para inspecionar
-```
-
-### Problemas de Performance
-```javascript
-// Network tab para requisições lentas
-// Profiler tab para React renders
-// Memory tab para vazamentos
-```
-
-## Próximas Melhorias
-
-### Curto Prazo
-- [ ] Testes automatizados
-- [ ] ESLint/Prettier configuração
-- [ ] Error boundaries no React
-- [ ] Loading skeletons
-
-### Médio Prazo
-- [ ] Database real (PostgreSQL)
-- [ ] Autenticação JWT
-- [ ] Cache Redis
-- [ ] Docker containers
-
-### Longo Prazo  
-- [ ] Microservices architecture
-- [ ] GraphQL API
-- [ ] Real-time updates
-- [ ] Mobile app (React Native)
-
-## Recursos Úteis
-
-### Documentação
-- [React Docs](https://react.dev/)
-- [Express.js Guide](https://expressjs.com/)
-- [Tailwind CSS](https://tailwindcss.com/)
-- [Vite Guide](https://vitejs.dev/)
-
-### Ferramentas
-- [Postman](https://www.postman.com/) - API testing
-- [React DevTools](https://react.dev/tools) - Browser extension
-- [Node.js Inspector](https://nodejs.org/api/debugger.html) - Debugging
-
-### Comunidade
-- [Stack Overflow](https://stackoverflow.com/)
-- [GitHub Issues](https://github.com/chmulato/hub_town/issues)
-- [MDN Web Docs](https://developer.mozilla.org/)

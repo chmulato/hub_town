@@ -1,0 +1,63 @@
+Crie uma ilustração horizontal em 1920x1080, lúdica e executiva, que comunique o valor do Hub Town sem tecnicismos explícitos.
+
+Conceito visual (metáfora clara):
+- Uma pequena cidade conectada por avenidas fluídas até uma “praça central” (o Hub). As lojas representam marketplaces; a praça representa o Hub Town.
+- As avenidas têm fluxos luminosos que convergem para a praça (ingestão) e saem organizados para um “mirante” com painéis de KPIs (leitura confiável).
+- Evite logotipos reais. Use ícones genéricos (lojas, setas, praça, mirante/painel) e formas simples.
+
+Mensagem central:
+- “Conectamos pontos de venda diferentes em um centro único, transformando fluxo caótico em informação clara para decisões.”
+
+Composição e estilo:
+- Estilo clean, moderno, com toques lúdicos (formas arredondadas, cores amigáveis), mantendo sobriedade executiva.
+- Paleta sugerida: base azul petróleo (#0F172A), ciano (#0891B2), cinza (#64748B); acentos em laranja (#F59E0B) para destacar fluxos e KPIs.
+- Hierarquia visual: esquerda → lojas/marketplaces; centro → praça/Hub; direita → mirante/KPIs. Setas/fluxos suaves e contínuos.
+- Fundo claro com textura sutil; sombras leves (soft drop shadow) para profundidade discreta.
+
+Elementos obrigatórios (sem jargão técnico):
+- Lojas genéricas (3 a 4) com ícones de sacola/carrinho.
+- Avenidas/fluxos de luz convergindo para a praça central.
+- Praça/Hub no centro com selo discreto: “Hub Town”.
+- Mirante ou painel à direita com 2–3 indicadores (ex.: pedidos hoje, entregues, pendentes) em cartões simples.
+
+Tom e emoção:
+- Sensação de “organização do movimento”: tudo flui e chega claro ao tomador de decisão.
+- Otimismo, clareza, confiança.
+
+Texto opcional (discreto, se couber):
+- Título: “Hub Town — Do movimento à clareza”
+- Subtítulo: “Integração simples. Leitura confiável.”
+
+Qualidade e execução:
+- Alta definição, anti-aliasing suave, bordas limpas.
+- Evitar excesso de detalhes técnicos; foco na metáfora e na legibilidade executiva.
+Crie uma ilustração horizontal em 1920x1080 que represente a arquitetura do Hub Town, com foco em ingestão de pedidos e leitura confiável:
+
+Cena e composição:
+- Estilo profissional, clean-tech, com cores modernas (azul petróleo, ciano, cinza, toques em laranja para destaques). Fundo claro suavemente texturizado.
+- Estruture em camadas horizontais, da esquerda para a direita, mostrando o fluxo de dados.
+
+Elementos obrigatórios (com rótulos discretos):
+1) Múltiplos Marketplaces (Mercado Livre, Shopee, Shein) — ícones genéricos sem marcas registradas; rótulo: "Marketplaces".
+2) Serviço de Ingestão (Spring Boot) — um bloco com o logo genérico de Java e símbolo de engrenagem; rótulo: "Ingestão (Spring Boot)".
+3) Mensageria — um Exchange e filas com setas (incluindo DLQ); rótulo: "RabbitMQ (exchanges, filas, DLQ)".
+4) Banco de Dados — cilindro clássico com rótulo: "PostgreSQL".
+5) API de Leitura — bloco com ícone de API/REST; rótulo: "API de Leitura".
+6) Front-end (React/Vite) — tela com gráfico/KPIs; rótulo: "Front-end".
+
+Fluxo e ênfases visuais:
+- Use setas contínuas da esquerda para a direita: Marketplaces → Ingestão → RabbitMQ → PostgreSQL → API de Leitura → Front-end.
+- Adicione ícones pequenos sinalizando: idempotência (símbolo de carimbo/check), normalização (camadas alinhadas), e observabilidade (gráfico/olho) próximos ao caminho Ingestão → RabbitMQ → PostgreSQL.
+- Destaque a resiliência com uma pequena ramificação para DLQ na área do RabbitMQ.
+
+Estilo e linguagem visual:
+- Flat/semiflat com leve sombreado e vidro fosco (glassmorphism sutil). Espaçamento amplo, tipografia legível, rótulos curtos.
+- Nada de marcas ou logotipos oficiais; use ícones genéricos e formas geométricas.
+
+Texto principal (títulos discretos):
+- "Hub Town — Arquitetura de Ingestão e Leitura Confiável"
+- Subtítulo pequeno: "Spring Boot • RabbitMQ • PostgreSQL • API • Front-end"
+
+Qualidade técnica:
+- Alta definição (4K downscale), antialiasing suave, bordas limpas.
+- Paleta: #0F172A (azul petróleo), #0891B2 (ciano), #64748B (cinza), acentos #F59E0B (laranja).

@@ -1,128 +1,65 @@
-# Hub Town - Setup Completo
+# Hub Town — Setup resumido (1 página)
 
-## Script Principal Atualizado
+Uma visão rápida para subir o ambiente local, URLs úteis, variáveis-chave e onde ler mais.
 
-O arquivo `start.ps1` foi atualizado para incluir configuração completa do PostgreSQL:
+## Como subir (Windows PowerShell)
 
-### Funcionalidades Adicionadas
-
-1. **Verificação de Dependências**
-   - Docker Desktop
-   - Node.js
-   - Estrutura do projeto
-
-2. **Configuração Automática do PostgreSQL**
-   - Inicia container PostgreSQL via Docker Compose
-   - Cria todas as tabelas (schema.sql)
-   - Insere dados iniciais (seeds.sql)
-   - Verifica conectividade
-
-3. **Migração de Dados**
-   - Migra dados dos JSONs dos marketplaces
-   - Normaliza endereços
-   - Mapeia status entre marketplaces
-   - Evita duplicação de compradores
-
-4. **Inicialização Completa**
-   - Backend Node.js com PostgreSQL
-   - Frontend React/Vite
-   - Documentação Swagger
-
-## Como Usar
-
+Na raiz do repositório:
 ```powershell
-# Na raiz do projeto
-.\start.ps1
+./start.ps1
 ```
 
-### O que o script faz:
+O que acontece:
+- Sobe PostgreSQL (Docker Compose), aplica `schema.sql` + `seeds.sql` e migra os JSONs.
+- Define `DATA_SOURCE=db` no backend e inicia API (3001).
+- Define `VITE_API_BASE_URL` e inicia o frontend (5173).
 
-1. **Verificações iniciais**
-   - Docker instalado e rodando
-   - Node.js disponível
-   - Estrutura do projeto
+## URLs
 
-2. **Setup do PostgreSQL**
-   - Para containers existentes
-   - Inicia PostgreSQL fresh
-   - Aguarda estar pronto
-   - Executa schema.sql
-   - Executa seeds.sql
+- UI: http://localhost:5173
+- API: http://localhost:3001/api
+- Swagger UI: http://localhost:3001/api/swagger
+- PostgreSQL: localhost:5432 (hubtown_user / hubtown_pass)
+- RabbitMQ UI: http://localhost:15672 (hubtown_user / hubtown_pass)
 
-3. **Migração dos dados**
-   - Lê JSONs dos marketplaces
-   - Normaliza dados
-   - Insere no PostgreSQL
+## Variáveis de ambiente (essenciais)
 
-4. **Instalação de dependências**
-   - Back-end: npm install
-   - Front-end: npm install
+- Backend: `DATA_SOURCE` (mock|db|api), `PORT`, `DB_HOST/PORT/NAME/USER/PASSWORD`
+- Frontend: `VITE_API_BASE_URL`
 
-5. **Inicialização dos serviços**
-   - Backend na porta 3001
-   - Frontend na porta 5173
-   - PostgreSQL na porta 5432
+## Testes
 
-## URLs Disponíveis
-
-- **Aplicação Web**: http://localhost:5173
-- **API Backend**: http://localhost:3001
-- **Swagger UI**: http://localhost:3001/api/docs
-- **PostgreSQL**: localhost:5432
-
-## Banco de Dados
-
-- **Host**: localhost
-- **Porta**: 5432
-- **Banco**: hubtown_db
-- **Usuário**: hubtown_user
-- **Senha**: hubtown_pass
-
-## Estrutura Criada
-
-### Tabelas Principais
-- `marketplaces` - Shopee, Mercado Livre, Shein
-- `addresses` - Endereços normalizados
-- `buyers` - Compradores/clientes
-- `drivers` - Motoristas/entregadores
-- `routes` - Rotas de entrega
-- `orders` - Pedidos unificados
-
-### Dados Migrados
-- ~20 pedidos do Shopee
-- ~20 pedidos do Mercado Livre
-- ~20 pedidos da Shein
-- Total: ~60 pedidos
-
-## Troubleshooting
-
-### Docker não encontrado
+Execução end-to-end (sobe backend, espera, roda testes, encerra):
 ```powershell
-# Instalar Docker Desktop
-# https://www.docker.com/products/docker-desktop
+node .\tests\scripts\run-with-server.js
 ```
 
-### Erro de execução do PowerShell
+Execução da suíte diretamente:
 ```powershell
-Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser
+node .\tests\scripts\run-all-tests.js
 ```
 
-### PostgreSQL não inicia
+Mais detalhes: `tests/README.md`.
+
+## Problemas comuns (atalhos)
+
+- PowerShell Execution Policy:
 ```powershell
-docker-compose down -v
-docker-compose up -d
+Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### Migração falha
-- Verificar se JSONs existem em `back-end/data/`
-- Verificar conectividade com PostgreSQL
-- Executar manualmente: `node back-end/migrate-json-data.js`
+- Reset do banco (apaga dados do volume):
+```powershell
+docker-compose down -v; docker-compose up -d
+```
 
-## Próximos Passos
+- API não responde:
+  - Verifique `http://localhost:3001/api/info`.
+  - Cheque logs do backend e do Postgres: `docker-compose ps` / `docker logs hubtown_postgres`.
 
-1. Acessar http://localhost:5173
-2. Verificar dados migrados
-3. Testar APIs via Swagger
-4. Implementar novas funcionalidades
+## Onde ler mais
 
-O sistema agora está completamente integrado com PostgreSQL e pronto para desenvolvimento!
+- Instalação completa (Windows, compose, testes): `doc/INSTALACAO.md`
+- Setup do PostgreSQL (detalhado): `doc/DATABASE_SETUP.md`
+- RabbitMQ (setup e filas): `doc/RABBIT_MQ_SETUP.md`
+- Arquitetura e fluxos: `doc/ARQUITETURA.md`

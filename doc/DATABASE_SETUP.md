@@ -1,145 +1,83 @@
-# PostgreSQL Setup - HUB de Entregas
+# PostgreSQL Setup — Hub Town
 
-Este documento descreve como configurar o PostgreSQL localmente usando Docker para o projeto HUB de Entregas.
+Configuração do PostgreSQL local via Docker Compose, alinhada ao `start.ps1` e aos scripts da pasta `database/`.
 
 ## Pré-requisitos
 
-- Docker Desktop instalado
-- Node.js 16+ instalado
-- PowerShell (Windows)
+- Docker Desktop
+- Node.js 18+
+- Windows PowerShell (5.1+) ou PowerShell 7+
 
-## Setup Rápido
+## Setup rápido (recomendado)
 
-Execute o script automatizado na raiz do projeto:
+Use o orquestrador principal, que provisiona o DB e aplica schema/seeds automaticamente:
 
 ```powershell
 ./start.ps1
 ```
 
-Este script irá:
-1. Verificar Docker e Node
-2. Iniciar PostgreSQL via Docker Compose
-3. Criar todas as tabelas do banco (schema.sql)
-4. Inserir dados iniciais (seeds.sql)
-5. Instalar dependências do backend e frontend
-6. Migrar dados dos JSONs existentes para PostgreSQL
-7. Configurar variáveis de ambiente de sessão e iniciar os serviços
+Ele irá:
+1) Subir o container `hubtown_postgres` via docker-compose.
+2) Aguardar readiness (`pg_isready`).
+3) Aplicar `database/schema.sql` e `database/seeds.sql`.
+4) Migrar dados JSON para o DB (`back-end/migrate-json-data.js`).
+5) Iniciar backend (DATA_SOURCE=db) e frontend.
 
-## Setup Manual
+## Setup manual (alternativo)
 
-### 1. Iniciar PostgreSQL
-
+1) Subir PostgreSQL
 ```powershell
 docker-compose up -d
 ```
 
-### 2. Aguardar PostgreSQL estar pronto
-
+2) Verificar readiness
 ```powershell
 docker exec hubtown_postgres pg_isready -U hubtown_user -d hubtown_db
 ```
 
-### 3. Inicializar banco de dados
-
+3) Criar tabelas e popular seeds
 ```powershell
-.\database\init-db.ps1
+./database/init-db.ps1
 ```
 
-### 4. Instalar dependências do backend
-
+4) (Opcional) Migrar dados dos JSONs de exemplo
 ```powershell
-cd back-end
-npm install
+cd back-end; node migrate-json-data.js
 ```
 
-### 5. Configurar variáveis de ambiente
+## Conexão
 
+- Host: localhost
+- Porta: 5432
+- Banco: hubtown_db
+- Usuário: hubtown_user
+- Senha: hubtown_pass
+- Connection String: `postgresql://hubtown_user:hubtown_pass@localhost:5432/hubtown_db`
+
+## Comandos úteis (PowerShell)
+
+- Abrir psql dentro do container:
 ```powershell
-cp .env.example .env
-```
-
-### 6. Migrar dados dos JSONs
-
-```powershell
-node migrate-json-data.js
-```
-
-## Estrutura do Banco
-
-O banco foi estruturado baseado no `doc/rascunho_db.txt` com as seguintes tabelas principais:
-
-### Core Tables
-- **marketplaces** - Shopee, Mercado Livre, Shein, etc.
-- **addresses** - Endereços normalizados para evitar duplicação
-- **buyers** - Compradores/clientes
-- **drivers** - Motoristas/entregadores
-- **routes** - Rotas de entrega
-- **orders** - Pedidos unificados de todos os marketplaces
-
-### Audit Tables
-- **access_logs** - Logs de acesso para LGPD
-- **order_status_history** - Histórico de mudanças de status
-
-### Key Features
-- **hub_order_id** gerado automaticamente (formato: HUB20250913000001)
-- **Status padronizado** entre marketplaces
-- **Triggers para auditoria** automática
-- **Índices otimizados** para consultas frequentes
-- **Suporte a dados geo** (latitude/longitude)
-
-## Configuração de Conexão
-
-### Dados de Conexão
-```
-Host: localhost
-Porta: 5432
-Banco: hubtown_db
-Usuário: hubtown_user
-Senha: hubtown_pass
-```
-
-### String de Conexão
-```
-postgresql://hubtown_user:hubtown_pass@localhost:5432/hubtown_db
-```
-
-## Comandos Úteis
-
-### Conectar via psql
-```bash
 docker exec -it hubtown_postgres psql -U hubtown_user -d hubtown_db
 ```
 
-### Backup do banco
-```bash
+- Backup e restore (simples):
+```powershell
 docker exec hubtown_postgres pg_dump -U hubtown_user hubtown_db > backup.sql
-```
-
-### Restaurar backup
-```bash
 docker exec -i hubtown_postgres psql -U hubtown_user -d hubtown_db < backup.sql
 ```
 
-### Ver logs do PostgreSQL
-```bash
+- Logs e ciclo de vida:
+```powershell
 docker logs hubtown_postgres
-```
-
-### Parar PostgreSQL
-```bash
+docker-compose ps
 docker-compose down
+docker-compose down -v; docker-compose up -d
 ```
 
-### Reiniciar com dados limpos
-```bash
-docker-compose down -v
-docker-compose up -d
-.\database\init-db.ps1
-```
+## Consultas de exemplo
 
-## Consultas de Exemplo
-
-### Ver todos os pedidos com informações completas
+- Pedidos com informações essenciais (join normalizado):
 ```sql
 SELECT 
     o.hub_order_id,
@@ -156,7 +94,7 @@ JOIN addresses a ON b.address_id = a.id
 ORDER BY o.created_at DESC;
 ```
 
-### Estatísticas por marketplace
+- Estatísticas por marketplace:
 ```sql
 SELECT 
     m.name as marketplace,
@@ -168,7 +106,7 @@ JOIN marketplaces m ON o.marketplace_id = m.id
 GROUP BY m.name;
 ```
 
-### Pedidos por status
+- Pedidos por status:
 ```sql
 SELECT 
     order_status,
@@ -178,61 +116,31 @@ GROUP BY order_status
 ORDER BY count DESC;
 ```
 
-## Iniciar o Backend
-
-Após o setup do banco:
-
-```powershell
-cd back-end
-npm start
-```
-
-O backend estará disponível em:
-- **API**: http://localhost:3001
-- **Swagger UI**: http://localhost:3001/api/swagger
-- **Health Check**: http://localhost:3001/api/info
-
-## Migração de Dados
-
-O script `migrate-json-data.js` converte os dados dos arquivos JSON para o formato PostgreSQL:
-
-- Normaliza endereços
-- Mapeia status entre marketplaces
-- Evita duplicação de compradores
-- Gera hub_order_id únicos
-- Registra logs de auditoria
-
 ## Troubleshooting
 
-### PostgreSQL não inicia
-```bash
-docker-compose down -v
-docker-compose up -d
+- PostgreSQL não inicia (reset rápido do volume):
+```powershell
+docker-compose down -v; docker-compose up -d
 ```
 
-### Erro de conexão
-1. Verificar se PostgreSQL está rodando: `docker ps`
-2. Verificar logs: `docker logs hubtown_postgres`
-3. Testar conexão: `docker exec hubtown_postgres pg_isready -U hubtown_user -d hubtown_db`
+- Erro de conexão:
+1) Verifique containers: `docker ps`
+2) Logs do Postgres: `docker logs hubtown_postgres`
+3) Readiness: `docker exec hubtown_postgres pg_isready -U hubtown_user -d hubtown_db`
 
-### Erro nas migrations
-1. Verificar se banco está acessível
-2. Executar manualmente: `.\database\init-db.ps1`
-3. Verificar logs de erro
-
-### Dependências do Node.js
-```bash
-cd back-end
-rm -rf node_modules package-lock.json
-npm install
+- Reaplicar schema/seeds manualmente:
+```powershell
+./database/init-db.ps1
 ```
 
-## Próximos Passos
+- Dependências do Node.js (backend):
+```powershell
+cd back-end; rm -r -fo node_modules, package-lock.json; npm install
+```
 
-1. **Implementar autenticação** para acesso aos dados
-2. **Criar APIs REST** para CRUD de pedidos
-3. **Sistema de rotas** para otimização de entregas
-4. **Dashboard** para visualização de dados
-5. **Integração real** com APIs dos marketplaces
-6. **Notificações** para mudanças de status
-7. **App mobile** para entregadores
+## Referências
+
+- `database/schema.sql` e `database/seeds.sql`
+- `database/init-db.ps1` (Windows) e `database/init-db.sh` (Linux/Mac)
+- `back-end/migrate-json-data.js`
+- `doc/INSTALACAO.md` para visão completa (start.ps1, testes, RabbitMQ)
