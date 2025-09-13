@@ -2,8 +2,9 @@
 import express from "express";
 import cors from 'cors';
 import swaggerUi from 'swagger-ui-express';
-import config from './config/config.js';
+import { config } from './config/config.js';
 import { swaggerSpec } from './config/swagger.js';
+import { initDatabase, testConnection, closeDatabase } from './config/database.js';
 
 // Importar rotas
 import authRoutes from './routes/auth.js';
@@ -129,13 +130,54 @@ app.use('*', (req, res) => {
   });
 });
 
-// Iniciar servidor
-app.listen(PORT, config.server.host, () => {
-  console.log(`Hub Central de Pedidos API iniciada!`);
-  console.log(`Servidor: http://${config.server.host}:${PORT}`);
-  console.log(`Swagger UI: http://${config.server.host}:${PORT}/api/swagger`);
-  console.log(`Documentação: http://${config.server.host}:${PORT}/api/docs`);
-  console.log(`Autenticação: ${config.auth.enabled ? 'Habilitada' : 'Desabilitada'}`);
-  console.log(`Marketplaces ativos: ${Object.keys(config.marketplaces).filter(key => config.marketplaces[key].enabled).join(', ')}`);
-  console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+// Função para inicializar o servidor
+async function startServer() {
+  try {
+    // Inicializar banco de dados
+    console.log('Inicializando sistema...');
+    initDatabase();
+    
+    // Testar conexão com o banco
+    const dbConnected = await testConnection();
+    if (!dbConnected) {
+      console.warn('AVISO: Servidor iniciado sem conexão com banco de dados');
+    }
+
+    // Iniciar servidor HTTP
+    app.listen(PORT, config.server.host, () => {
+      console.log(`Hub Central de Pedidos API iniciada!`);
+      console.log(`Servidor: http://${config.server.host}:${PORT}`);
+      console.log(`Swagger UI: http://${config.server.host}:${PORT}/api/swagger`);
+      console.log(`Documentação: http://${config.server.host}:${PORT}/api/docs`);
+      console.log(`Autenticação: ${config.auth.enabled ? 'Habilitada' : 'Desabilitada'}`);
+      console.log(`Marketplaces ativos: ${Object.keys(config.marketplaces).filter(key => config.marketplaces[key].enabled).join(', ')}`);
+      console.log(`Ambiente: ${process.env.NODE_ENV || 'development'}`);
+      
+      if (dbConnected) {
+        console.log(`Database: PostgreSQL conectado - OK`);
+      } else {
+        console.log(`Database: PostgreSQL desconectado - ERRO`);
+      }
+    });
+
+  } catch (error) {
+    console.error('Erro ao inicializar servidor:', error);
+    process.exit(1);
+  }
+}
+
+// Graceful shutdown
+process.on('SIGINT', async () => {
+  console.log('\nRecebido SIGINT. Encerrando servidor...');
+  await closeDatabase();
+  process.exit(0);
 });
+
+process.on('SIGTERM', async () => {
+  console.log('\nRecebido SIGTERM. Encerrando servidor...');
+  await closeDatabase();
+  process.exit(0);
+});
+
+// Iniciar servidor
+startServer();

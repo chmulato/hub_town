@@ -1,0 +1,16 @@
+version: '3.8'
+services:
+  postgres:
+    image: postgres:15
+    container_name: hubtown_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: hubtown_user
+      POSTGRES_PASSWORD: hubtown_pass
+      POSTGRES_DB: hubtown_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+volumes:
+  postgres_data:

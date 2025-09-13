@@ -247,6 +247,7 @@ Para desenvolvedores e administradores de sistema, consulte a documentação té
 - **[Arquitetura do Sistema](doc/ARQUITETURA.md)**: Documento principal completo com arquitetura modular, fluxos de dados, configuração de APIs e especificações técnicas
 - **[Guia de Instalação](doc/INSTALACAO.md)**: Configuração detalhada do ambiente de desenvolvimento
 - **[Guia do Desenvolvedor](doc/DESENVOLVIMENTO.md)**: Informações para contribuidores e desenvolvimento
+- **[Setup PostgreSQL](doc/DATABASE_SETUP.md)**: Configuração completa do banco de dados PostgreSQL com Docker
 - **[Guia do Swagger](doc/SWAGGER_GUIDE.md)**: Documentação interativa da API e OpenAPI 3.0
 
 ### Documentação Interativa
@@ -343,3 +344,55 @@ Versão 2.0 | Setembro 2025 | Licenciado sob MIT License
 - **API-Ready**: Estrutura preparada para integração com marketplaces reais
 - **Enterprise-Ready**: Arquitetura escalável para ambientes corporativos
 - **CI/CD-Ready**: Estrutura preparada para pipelines de deploy automatizado
+
+---
+
+## Estrutura da Documentação
+
+### Documento Principal
+Este **README.md** é o documento inicial e principal do projeto, localizado na raiz:
+```
+C:\dev\hub_town\README.md
+```
+
+### Documentação Técnica Complementar
+Todos os documentos técnicos específicos estão organizados na pasta `doc/`:
+
+```
+C:\dev\hub_town\doc\
+├── ARQUITETURA.md       # Arquitetura detalhada do sistema
+├── DATABASE_SETUP.md    # Configuração PostgreSQL com Docker
+├── DESENVOLVIMENTO.md   # Guia para desenvolvedores
+├── INSTALACAO.md        # Guia completo de instalação
+├── SETUP_SUMMARY.md     # Resumo da configuração
+├── SWAGGER_GUIDE.md     # Documentação da API e OpenAPI 3.0
+└── img/                 # Imagens e diagramas
+    ├── 2025_09_28_IMAGE_001.png
+    ├── 2025_09_28_IMAGE_002.png
+    ├── 2025_09_28_IMAGE_003.png
+    └── 2025_09_28_IMAGE_004.png
+```
+
+### Fluxo de Leitura Recomendado
+
+**Para Usuários/Administradores:**
+1. Este README.md - Visão geral completa
+2. [doc/INSTALACAO.md](doc/INSTALACAO.md) - Como instalar
+3. [doc/DATABASE_SETUP.md](doc/DATABASE_SETUP.md) - Configurar PostgreSQL
+
+**Para Desenvolvedores:**
+1. Este README.md - Contexto do projeto
+2. [doc/ARQUITETURA.md](doc/ARQUITETURA.md) - Entender arquitetura
+3. [doc/DESENVOLVIMENTO.md](doc/DESENVOLVIMENTO.md) - Como contribuir
+4. [doc/SWAGGER_GUIDE.md](doc/SWAGGER_GUIDE.md) - APIs disponíveis
+
+**Para Configuração Técnica:**
+1. [doc/DATABASE_SETUP.md](doc/DATABASE_SETUP.md) - PostgreSQL com Docker
+2. [doc/SWAGGER_GUIDE.md](doc/SWAGGER_GUIDE.md) - APIs e documentação
+3. [doc/SETUP_SUMMARY.md](doc/SETUP_SUMMARY.md) - Resumo da configuração
+
+### Benefícios desta Organização
+- **Ponto de entrada único**: Este README.md contém toda informação essencial
+- **Documentação especializada**: Detalhes técnicos organizados em `doc/`
+- **Navegação intuitiva**: Referências claras entre documentos
+- **Manutenção facilitada**: Estrutura padrão para projetos profissionais
