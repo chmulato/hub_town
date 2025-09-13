@@ -1,4 +1,4 @@
-# Plano de Ação 01 — Endpoints com Dados Reais (PostgreSQL) e Frontend consumindo DB
+# Plano de Ação — Endpoints com Dados Reais (PostgreSQL) e Frontend consumindo DB
 
 Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoints da API e ajustar o frontend para consultar esses dados reais com paginação e busca unificada.
 
@@ -15,12 +15,9 @@ Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoi
   - Swagger UI ajustado (docExpansion=list) e /api/info expõe dataSource.
 - Frontend (parte da Fase 3): concluído o essencial.
   - Uso de VITE_API_BASE_URL; remoção de URLs hard-coded; contadores baseados em “total”.
-  - Aba “Todos” consumindo /orders/search (DB quando habilitado).
+  - Aba “Todos” consumindo /orders/search (DB quando habilitado) e KPIs por /orders/stats.
 - Pendências principais:
-  - start.ps1: corrigir mensagens e definir DATA_SOURCE=db no bootstrap.
-  - UI KPIs: consumir /orders/stats (substituir estimativas por dados reais).
   - Swagger: atualizar exemplos dos payloads para refletir status em UPPERCASE e marketplace slug.
-  - README: quick-start DB-first.
   - Smoke tests nos principais endpoints (mock e db).
 
 
@@ -34,16 +31,16 @@ Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoi
   - Usar campos `total`, `currentPage`, `totalPages` retornados pela API para contadores e paginação.
   - Abas específicas consultam `/marketplace/:marketplace/orders` do DB; aba “Todos” consulta `/orders/search` (unificada, DB).
 - Operacional
-  - Corrigir pequenos erros no `start.ps1` e garantir subida consistente do Postgres + migração.
+  - `start.ps1` como ponto único: sobe Postgres, aplica schema/seeds, migra JSONs e inicia serviços em modo DB.
   - Manter rollback simples para mock se necessário (troca de config).
 
 
 ## Fase 0 — Preparação e Saúde do Ambiente
-- [ ] Corrigir mensagens truncadas no `start.ps1` (linhas com Write-Host quebradas)
-- [ ] Validar `docker-compose up -d` para Postgres (container `hubtown_postgres` OK)
-- [ ] Executar `database/init-db.ps1` via `setup-database.ps1` e confirmar `schema.sql` + `seeds.sql`
-- [ ] Rodar `back-end/migrate-json-data.js` e validar contagens nas tabelas
-- [ ] Adicionar `back-end/.env.example` (PORT, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, AUTH_ENABLED, JWT_SECRET)
+- [x] Corrigir mensagens truncadas no `start.ps1` (linhas com Write-Host quebradas)
+- [x] Validar `docker-compose up -d` para Postgres (container `hubtown_postgres` OK)
+- [x] Executar `start.ps1` para provisionar o Postgres e confirmar `schema.sql` + `seeds.sql`
+- [x] Rodar `back-end/migrate-json-data.js` e validar contagens nas tabelas
+- [x] Adicionar/confirmar `back-end/.env.example` (PORT, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, AUTH_ENABLED, JWT_SECRET)
 - [x] Ajustar `/api/info` para refletir a origem de dados atual (mock/db/api)
 
 Critérios de aceitação
@@ -102,6 +99,7 @@ Critérios de aceitação (parciais)
 - [x] Abas Shopee/ML/Shein passam a chamar endpoints DB (`/api/marketplace/:id/orders`)
 - [x] Corrigir contadores para usar `total` da resposta (não o length da página)
 - [x] Aba “Todos” consome `/api/orders/search` (unificada) com paginação independente
+- [x] KPIs do topo consumindo `/api/orders/stats` (total/delivered/shipped/pending)
 - [x] Mostrar estado de carregamento e erros conforme novas chamadas
 
 Critérios de aceitação
@@ -118,6 +116,163 @@ Critérios de aceitação
 Critérios de aceitação
 - Testes passam localmente em modo DB
 - Smoke test: abrir Swagger e validar manualmente os 3 endpoints principais
+
+
+## Mapeamento de arquivos (provável impacto)
+- Backend
+  - `back-end/config/config.js` (nova chave data.source)
+  - `back-end/config/swagger.js` (docExpansion e exemplos)
+  - `back-end/config/database.js` (consultas auxiliares, se necessário)
+  - `back-end/services/marketplaceService.js` (caminhos DB para leitura)
+  - `back-end/routes/marketplace.js` e `back-end/routes/orders.js` (semântica de resposta, paginação)
+  - `back-end/server.js` (`/api/info` refletir source)
+- Frontend
+  - `front-end/vite.config.js` e `.env` (VITE_API_BASE_URL)
+  - `front-end/front.jsx` (chamadas, contadores, “Todos”, paginação)
+- Scripts/Infra
+  - `start.ps1` (mensagens, modo DB por padrão)
+  - `docker-compose.yml` (ok)
+  - `back-end/.env.example` (novo)
+
+
+## Riscos e mitigação
+- Diferentes formatos de endereço nos JSONs podem impactar normalização → manter fallback robusto no parser (já existe) e logar avisos
+- Duplicidade de `orderId` em mocks pode reduzir contagens no DB (UNIQUE) → ajustar JSONs ou aceitar dedupe; reportar no log de migração
+- Mudança de contratos no FE (contadores/paginação) → alinhar tipos e testar manualmente
+
+
+## Rollback
+- Alterar `DATA_SOURCE=mock` no `.env` do backend para voltar a servir dados mock as-is
+- Frontend continua funcional (dados de exemplo) sem mudanças estruturais
+
+
+## Linha do tempo sugerida
+- Dia 1: Fase 0 (preparação) + início Fase 1 (flag e `/marketplace/:id/orders` via DB)
+- Dia 2: Fase 1 (search/stats via DB) + Swagger + smoke test
+- Dia 3: Fase 3 (frontend baseURL, contadores e “Todos”) + testes mínimos (Fase 4)
+- Dia 4+: Fase 2 (persistência escrita e configs) conforme prioridade
+
+
+## Próximas ações (execução imediata)
+- [x] Corrigir `start.ps1` (mensagens) e definir `DATA_SOURCE=db` no bootstrap; registrar modo no log
+- [x] Frontend: usar `/api/orders/stats` para KPIs reais (total/delivered/shipped/pending)
+- [ ] Swagger: atualizar exemplos para refletir payload do DB (status UPPERCASE, marketplace slug)
+- [ ] Smoke tests: validar `/marketplace/*/orders`, `/orders/search`, `/orders/stats` nos modos mock e db
+
+---
+
+Responsável: Equipe Hub  •  Revisão: Produto/Tech Lead  •  Versão: 1.0 (2025-09-13)
+
+## Esquemático da arquitetura alvo (sem mocks)
+
+Abaixo um desenho esquemático da topologia final onde:
+- Mocks são removidos do caminho de execução.
+- O backend recebe dados reais via Webhooks (push) ou Polling (pull) das APIs oficiais e persiste no PostgreSQL.
+- O frontend NUNCA consulta marketplaces diretamente e SEMPRE consome os dados via API do backend que lê do banco.
+
+### Visão de componentes
+
+```mermaid
+flowchart LR
+  subgraph Marketplaces [APIs Oficiais]
+    A1[Shopee API]
+    A2[Mercado Livre API]
+    A3[Shein API]
+  end
+
+  subgraph Backend [Node/Express]
+    B1[/Webhooks: /api/webhooks/:mp/]
+    B2[Jobs de Polling/Adapters]
+    B3[Serviços: MarketplaceService (DB)]
+    B4[Rotas REST: /api/marketplace, /api/orders]
+  end
+
+  subgraph Database [PostgreSQL]
+    D1[(marketplaces)]
+    D2[(orders)]
+    D3[(buyers)]
+    D4[(addresses)]
+    D5[(order_status_history)]
+  end
+
+  subgraph Frontend [React/Vite]
+    F1[UI Abas + Busca + Stats]
+  end
+
+  A1 -->|Eventos/Webhooks| B1
+  A2 -->|Eventos/Webhooks| B1
+  A3 -->|Eventos/Webhooks| B1
+  B2 -->|Polling/ETL| A1
+  B2 -->|Polling/ETL| A2
+  B2 -->|Polling/ETL| A3
+  B1 -->|Normaliza/Valida| B3
+  B2 -->|Normaliza/Valida| B3
+  B3 -->|Upsert| D2
+  B3 --> D3
+  B3 --> D4
+  B3 --> D5
+
+  F1 -->|GET /api/marketplace/:id/orders| B4
+  F1 -->|GET /api/orders/search| B4
+  F1 -->|GET /api/orders/stats| B4
+  B4 -->|SELECT/Paginação| B3
+  B3 -->|SQL| D2
+  D2 --> B3
+  B3 --> B4
+  B4 --> F1
+```
+
+### Sequência — Ingestão (push e pull)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant MP as Marketplace API
+  participant BE as Backend (Webhook/Adapter)
+  participant DB as PostgreSQL
+
+  rect rgba(200, 255, 200, 0.2)
+    note over MP,BE: Webhook (push) - quando marketplace envia
+    MP->>BE: POST /api/webhooks/{marketplace} (pedido JSON)
+    BE->>BE: Validar assinatura/autenticação
+    BE->>BE: Normalizar payload (status, buyer, address)
+    BE->>DB: UPSERT buyers/addresses
+    BE->>DB: INSERT orders (UNIQUE marketplace_id+original_order_id)
+    DB-->>BE: OK
+    BE-->>MP: 200 OK
+  end
+
+  rect rgba(200, 200, 255, 0.2)
+    note over BE,MP: Polling (pull) - cron job
+    BE->>MP: GET /orders?updated_since=...
+    MP-->>BE: 200 [lista de pedidos]
+    BE->>BE: Normalizar e deduplicar
+    BE->>DB: UPSERT entidades + INSERT/UPDATE orders
+    DB-->>BE: OK
+  end
+```
+
+### Sequência — Consulta (Frontend → API → DB)
+
+```mermaid
+sequenceDiagram
+  autonumber
+  participant UI as Frontend (React)
+  participant API as Backend /api
+  participant DB as PostgreSQL
+
+  UI->>API: GET /api/orders/search?search=...&page=1&limit=10
+  API->>DB: SELECT ... FROM orders JOIN buyers JOIN addresses ...
+  DB-->>API: rows + count
+  API-->>UI: { success, data, total, currentPage, totalPages }
+  UI->>UI: Renderizar lista, contadores e paginação
+```
+
+### Regras de operação (sem mocks)
+- Frontend não faz chamadas diretas aos marketplaces (apenas à API interna).
+- `config.data.source = 'db'` e caminhos de mock desabilitados no runtime.
+- Ingestão por Webhooks (preferencial) e/ou Jobs de Polling com normalização e UPSERT no DB.
+- Campos sensíveis e endpoints externos configurados via `.env` e/ou tabela `marketplace_configs` (segredos mascarados nas respostas).
 
 
 ## Mapeamento de arquivos (provável impacto)

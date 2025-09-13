@@ -139,43 +139,13 @@ back-end/
 ## Início Rápido
 
 ### DB-first (modo banco) — Início rápido
-Siga estes passos para rodar a API lendo do PostgreSQL e o front-end consumindo a API via DB. Comandos abaixo são para Windows PowerShell.
-
-1) Subir o PostgreSQL via Docker
+Para rodar tudo com PostgreSQL e a UI, use o script automatizado (Windows PowerShell):
 
 ```powershell
-docker-compose up -d
+./start.ps1
 ```
 
-2) Inicializar o banco e migrar os dados de exemplo
-
-```powershell
-./setup-database.ps1
-```
-
-3) Iniciar o back-end em modo DB (DATA_SOURCE=db)
-
-```powershell
-cd back-end
-npm install
-$env:DATA_SOURCE = 'db'
-# (opcional) configure a porta/host:
-# $env:PORT = '3001'; $env:HOST = 'localhost'
-npm start
-```
-
-4) Iniciar o front-end apontando para a API
-
-```powershell
-cd ../front-end
-Copy-Item .env.example .env -ErrorAction SilentlyContinue
-# ajuste VITE_API_BASE_URL em .env se necessário (padrão: http://localhost:3001/api)
-npm install
-npm run dev
-```
-
-Observações:
-- Também é possível usar o script automatizado `start.ps1`. Estamos ajustando pequenas mensagens e padronizando a ativação do modo DB; por ora, o fluxo manual acima é o caminho mais direto.
+O script vai subir o Postgres via Docker, aplicar `schema.sql` e `seeds.sql`, migrar os JSONs, definir `DATA_SOURCE=db`, iniciar o backend e o frontend, e exibir as URLs no final.
 
 ### Pré-requisitos
 - Node.js 18+ 
@@ -249,7 +219,7 @@ O sistema atualmente utiliza dados de demonstração que simulam pedidos reais:
 - Docker não está rodando: abra o Docker Desktop antes de `docker-compose up -d`.
 - Banco não conecta: confirme `hubtown_postgres` ativo e credenciais em `.env` do backend (ou variáveis de sessão) batendo com `docker-compose.yml`.
 - Portas em uso: backend (3001) e frontend (5173) — finalize processos nessas portas ou ajuste `PORT`/`Vite`.
-- Migração repetida/erros: o script de migração ignora duplicatas básicas; se necessário, derrube e suba novamente o container e reexecute `./setup-database.ps1`.
+- Migração repetida/erros: o script de migração ignora duplicatas básicas; se necessário, derrube e suba novamente o container e reexecute `./start.ps1`.
 - CORS: o backend já libera `http://localhost:5173`; ajuste `config.server.cors.origins` se usar outra origem.
 
 ## Arquitetura Técnica Detalhada
@@ -259,7 +229,6 @@ O sistema atualmente utiliza dados de demonstração que simulam pedidos reais:
 hub_town/
 ├── docker-compose.yml                 # Postgres via Docker
 ├── start.ps1                          # Orquestra startup (Windows)
-├── setup-database.ps1                 # Inicializa DB e migra JSON
 ├── README.md                          # Visão geral e quick start
 ├── LICENSE
 ├── back-end/                          # API Node/Express
@@ -498,7 +467,7 @@ C:\dev\hub_town\doc\
 1. [doc/DATABASE_SETUP.md](doc/DATABASE_SETUP.md) - PostgreSQL com Docker
 2. [doc/SWAGGER_GUIDE.md](doc/SWAGGER_GUIDE.md) - APIs e documentação
 3. [doc/SETUP_SUMMARY.md](doc/SETUP_SUMMARY.md) - Resumo da configuração
-4. [doc/PLANO_DE_ACAO_01.md](doc/PLANO_DE_ACAO_01.md) - Plano de Ação DB-first (progresso e próximos passos)
+4. [doc/PLANO_DE_ACAO.md](doc/PLANO_DE_ACAO.md) - Plano de Ação DB-first (progresso e próximos passos)
 
 ### Benefícios desta Organização
 - **Ponto de entrada único**: Este README.md contém toda informação essencial

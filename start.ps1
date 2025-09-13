@@ -8,11 +8,8 @@ Write-Host "      Com PostgreSQL Database" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
-# Verifica  Write-Host "  Documentacao: http://localhost:$backendPort/api/swagger" -ForegroundColor Gray
-
 Write-Host ""
-Write-Host "Verificando dependencias..." -ForegroundColor Yellow Docker esta instalado
-Write-Host "Verificando dependencias..." -ForegroundColor Cyan
+Write-Host "Verificando dependencias..." -ForegroundColor Yellow
 try {
     docker --version | Out-Null
     Write-Host "  Docker: Instalado" -ForegroundColor Green
@@ -433,12 +430,18 @@ Write-Host "========================================" -ForegroundColor Cyan
 # Detectar configuracoes
 $backendPort = Get-BackendPort -ConfigFilePath $configFile
 $frontendPort = 5173
+${null} = $frontendPort # evitar aviso em algumas versões do PowerShell
+
+# Definir fonte de dados padrão para o backend (DB)
+$dataSource = 'db'
+$env:DATA_SOURCE = $dataSource
 
 Write-Host ""
 Write-Host "Configuracoes detectadas:" -ForegroundColor Cyan
 Write-Host "  Back-end API: http://localhost:$backendPort" -ForegroundColor Gray
 Write-Host "  Front-end: http://localhost:$frontendPort" -ForegroundColor Gray
 Write-Host "  Swagger UI: http://localhost:$backendPort/api/swagger" -ForegroundColor Gray
+Write-Host "  Data Source (API): $dataSource" -ForegroundColor Gray
 
 Write-Host ""
 Write-Host "Verificando dependências..." -ForegroundColor Yellow
@@ -505,11 +508,12 @@ Set-Location $backendDir
 
 # Criar job para o back-end
 $backendJob = Start-Job -ScriptBlock {
-    param($dir, $port)
+    param($dir, $port, $ds)
     Set-Location $dir
     $env:PORT = $port
+    $env:DATA_SOURCE = $ds
     npm start
-} -ArgumentList $backendDir, $backendPort
+} -ArgumentList $backendDir, $backendPort, $dataSource
 
 # Aguardar inicialização do back-end
 Write-Host "   Aguardando inicialização..." -ForegroundColor Gray
@@ -543,6 +547,10 @@ Write-Host ""
 # Iniciar o front-end
 Write-Host "Iniciando interface front-end (porta $frontendPort)..." -ForegroundColor Cyan
 Set-Location $frontendDir
+
+# Definir base da API para o frontend (Vite)
+$env:VITE_API_BASE_URL = "http://localhost:$backendPort/api"
+Write-Host "  VITE_API_BASE_URL: $env:VITE_API_BASE_URL" -ForegroundColor Gray
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Green

@@ -13,17 +13,17 @@ Este documento descreve como configurar o PostgreSQL localmente usando Docker pa
 Execute o script automatizado na raiz do projeto:
 
 ```powershell
-.\setup-database.ps1
+./start.ps1
 ```
 
 Este script irá:
-1. Verificar se Docker está instalado
+1. Verificar Docker e Node
 2. Iniciar PostgreSQL via Docker Compose
-3. Criar todas as tabelas do banco
-4. Inserir dados iniciais (marketplaces, motoristas, etc.)
-5. Instalar dependências do Node.js
+3. Criar todas as tabelas do banco (schema.sql)
+4. Inserir dados iniciais (seeds.sql)
+5. Instalar dependências do backend e frontend
 6. Migrar dados dos JSONs existentes para PostgreSQL
-7. Configurar arquivo `.env`
+7. Configurar variáveis de ambiente de sessão e iniciar os serviços
 
 ## Setup Manual
 
@@ -189,7 +189,7 @@ npm start
 
 O backend estará disponível em:
 - **API**: http://localhost:3001
-- **Swagger UI**: http://localhost:3001/api/docs
+- **Swagger UI**: http://localhost:3001/api/swagger
 - **Health Check**: http://localhost:3001/api/info
 
 ## Migração de Dados
