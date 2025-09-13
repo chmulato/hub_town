@@ -16,9 +16,11 @@ Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoi
 - Frontend (parte da Fase 3): concluído o essencial.
   - Uso de VITE_API_BASE_URL; remoção de URLs hard-coded; contadores baseados em “total”.
   - Aba “Todos” consumindo /orders/search (DB quando habilitado) e KPIs por /orders/stats.
+- Testes (Fase 1): executados e aprovados (2/2) via runner `tests/scripts/run-with-server.js`.
+  - Resultados salvos em `tests/results/` (inclui latest-test-result.txt e histórico).
 - Pendências principais:
   - Swagger: atualizar exemplos dos payloads para refletir status em UPPERCASE e marketplace slug.
-  - Smoke tests nos principais endpoints (mock e db).
+  - Smoke tests no modo MOCK (modo DB já validado com o runner).
 
 
 ## Escopo técnico (alto nível)
@@ -109,13 +111,28 @@ Critérios de aceitação
 
 
 ## Fase 4 — Testes e Saúde
-- [ ] Adicionar testes mínimos de integração (Node) para `GET /api/marketplace/:id/orders`, `GET /api/orders/search`, `GET /api/orders/stats` (modo DB)
-- [ ] Atualizar testes existentes para considerar `DATA_SOURCE=db`
-- [ ] (Opcional) Configurar um runner de testes (Jest/Vitest) e script npm
+- [ ] Adicionar testes mínimos de integração (Node) para `GET /api/marketplace/:id/orders`, `GET /api/orders/search`, `GET /api/orders/stats` (avaliar cobertura atual do `tests/api-integration-test.js`)
+- [x] Atualizar testes existentes para considerar `DATA_SOURCE=db` (validado com runner dedicado)
+- [x] Adicionar runner de testes orquestrado (Node): `tests/scripts/run-with-server.js`
+- [ ] (Opcional) Integrar ao npm scripts e CI (ex.: `npm run test:integration`) e/ou Jest/Vitest
 
 Critérios de aceitação
 - Testes passam localmente em modo DB
 - Smoke test: abrir Swagger e validar manualmente os 3 endpoints principais
+
+### Como executar os testes (runner dedicado)
+
+O runner inicia o backend em modo DB, aguarda readiness, executa os testes e finaliza o servidor:
+
+```powershell
+# Na raiz do repositório
+node .\tests\scripts\run-with-server.js
+```
+
+Configurações:
+- Usa `PORT=3001` e `DATA_SOURCE=db` automaticamente para o backend.
+- Salva relatórios em `tests/results/`.
+- Respeita `TEST_API_URL` e `TEST_TIMEOUT` se definidos no ambiente.
 
 
 ## Mapeamento de arquivos (provável impacto)
@@ -157,7 +174,7 @@ Critérios de aceitação
 - [x] Corrigir `start.ps1` (mensagens) e definir `DATA_SOURCE=db` no bootstrap; registrar modo no log
 - [x] Frontend: usar `/api/orders/stats` para KPIs reais (total/delivered/shipped/pending)
 - [ ] Swagger: atualizar exemplos para refletir payload do DB (status UPPERCASE, marketplace slug)
-- [ ] Smoke tests: validar `/marketplace/*/orders`, `/orders/search`, `/orders/stats` nos modos mock e db
+- [ ] Smoke tests: validar `/marketplace/*/orders`, `/orders/search`, `/orders/stats` no modo MOCK (DB já validado)
 
 ---
 
