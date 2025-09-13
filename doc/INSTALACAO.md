@@ -1,4 +1,4 @@
-# Guia de Instalação e Configuração
+# Guia de Instalação e Configuração - Hub Central v2.0
 
 ## Pré-requisitos
 
@@ -10,6 +10,12 @@
 - **Node.js 18+** - [Download](https://nodejs.org/)
 - **npm** (incluído com Node.js)
 - **Git** - [Download](https://git-scm.com/)
+
+### Novas Dependências v2.0
+- **swagger-ui-express** - Documentação interativa
+- **swagger-jsdoc** - Geração de docs OpenAPI
+- **jsonwebtoken** - Autenticação JWT
+- **cors** - Cross-Origin Resource Sharing
 
 ### Verificação dos Pré-requisitos
 ```powershell
@@ -35,9 +41,11 @@ Execute o script de inicialização que instala dependências automaticamente:
 
 O script irá:
 - Verificar se as dependências estão instaladas
-- Instalar pacotes do back-end se necessário
+- Instalar pacotes do back-end se necessário (incluindo Swagger)
 - Instalar pacotes do front-end se necessário
+- Configurar variáveis de ambiente
 - Iniciar ambos os serviços
+- Abrir Swagger UI automaticamente
 
 ### 3. Instalação Manual
 
@@ -55,41 +63,93 @@ npm install
 
 ## Configuração
 
-### Estrutura de Arquivos
+### Nova Estrutura de Arquivos v2.0
 ```
 hub_town/
 ├── README.md                 # Documentação principal
 ├── start.ps1                 # Script de inicialização
 ├── .gitignore               # Arquivos ignorados pelo Git
-├── back-end/                # Servidor API
-│   ├── server.js            # Servidor Express
-│   ├── package.json         # Dependências do back-end
-│   └── data/                # Dados mock
+├── back-end/                # Servidor API Modular
+│   ├── server.js            # Servidor Express principal
+│   ├── package.json         # Dependências (inclui Swagger)
+│   ├── .env.example         # Configurações de ambiente
+│   ├── config/              # 🆕 Configurações centralizadas
+│   │   ├── config.js        # Configurações do sistema
+│   │   └── swagger.js       # Configuração Swagger UI
+│   ├── middleware/          # 🆕 Middleware reutilizável
+│   │   └── auth.js          # Autenticação JWT
+│   ├── routes/              # 🆕 Rotas modulares
+│   │   ├── auth.js          # Rotas de autenticação
+│   │   ├── marketplace.js   # Rotas dos marketplaces
+│   │   └── orders.js        # Rotas de pedidos
+│   ├── services/            # 🆕 Lógica de negócio
+│   │   └── marketplaceService.js
+│   └── data/                # Dados mock expandidos
 │       ├── shopee-orders.json
-│       └── mercadolivre-orders.json
+│       ├── mercadolivre-orders.json
+│       └── shein-orders.json  # 🆕 20 pedidos Shein
 ├── front-end/               # Aplicação React
-│   ├── front.jsx            # Componente principal
+│   ├── front.jsx            # Interface profissionalizada
 │   ├── index.html           # HTML base
 │   ├── package.json         # Dependências do front-end
 │   ├── vite.config.js       # Configuração Vite
 │   └── src/
 │       ├── main.jsx         # Entry point
 │       └── index.css        # Estilos
-└── doc/                     # Documentação técnica
+└── doc/                     # Documentação expandida
     ├── API.md
+    ├── API_V2_SETUP.md      # 🆕 Setup da nova versão
+    ├── SWAGGER_GUIDE.md     # 🆕 Guia do Swagger
     ├── ARQUITETURA.md
+    ├── DESENVOLVIMENTO.md
     └── INSTALACAO.md
 ```
 
-### Configuração de Portas
+### Configuração de Portas e URLs
 
-O sistema usa as seguintes portas por padrão:
+O sistema v2.0 usa as seguintes portas por padrão:
 - **Back-end**: 3001
 - **Front-end**: 5173
+- **Swagger UI**: http://localhost:3001/api/swagger
+- **API Info**: http://localhost:3001/api/info
 
-Para alterar a porta do back-end, edite `back-end/server.js`:
+### 🔧 Configuração de Ambiente
+
+#### Arquivo `.env` (Opcional)
+Copie `.env.example` para `.env` e configure:
+```bash
+# Servidor
+PORT=3001
+HOST=localhost
+
+# Autenticação JWT
+AUTH_ENABLED=false
+JWT_SECRET=your-secret-key
+
+# CORS
+CORS_ORIGINS=http://localhost:5173,http://localhost:3000
+
+# Modo de desenvolvimento
+NODE_ENV=development
+```
+
+#### Configuração via `config/config.js`
 ```javascript
-const PORT = 3001; // Altere aqui
+export const config = {
+  server: {
+    port: process.env.PORT || 3001,
+    host: process.env.HOST || 'localhost'
+  },
+  auth: {
+    enabled: process.env.AUTH_ENABLED === 'true',
+    jwtSecret: process.env.JWT_SECRET || 'default-secret'
+  },
+  marketplaces: {
+    shopee: { enabled: true, icon: 'SHOP' },
+    mercadolivre: { enabled: true, icon: 'STORE' },
+    shein: { enabled: true, icon: 'FASHION' }
+  }
+};
 ```
 
 Para alterar a porta do front-end, edite `front-end/vite.config.js`:

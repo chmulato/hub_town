@@ -1,0 +1,142 @@
+[
+  {
+    "orderId": "SHN240901001",
+    "buyer": "Amanda Silva",
+    "product": "Vestido Floral Verão",
+    "status": "DELIVERED",
+    "address": "Rua das Flores, 123 - Vila Madalena - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901002", 
+    "buyer": "Beatriz Costa",
+    "product": "Conjunto Moletom Oversized",
+    "status": "SHIPPED",
+    "address": "Av. Paulista, 1500 - Bela Vista - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901003",
+    "buyer": "Camila Santos",
+    "product": "Blusinha Cropped Básica",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Augusta, 789 - Consolação - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901004",
+    "buyer": "Daniela Oliveira",
+    "product": "Calça Jeans Skinny",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Oscar Freire, 456 - Jardins - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901005",
+    "buyer": "Eduarda Lima",
+    "product": "Saia Plissada Mini",
+    "status": "DELIVERED",
+    "address": "Av. Brigadeiro Faria Lima, 2000 - Itaim Bibi - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901006",
+    "buyer": "Fernanda Rodrigues",
+    "product": "Blazer Oversized Xadrez",
+    "status": "SHIPPED",
+    "address": "Rua Consolação, 654 - Centro - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901007",
+    "buyer": "Gabriela Martins",
+    "product": "Top Básico Ribana",
+    "status": "READY_TO_SHIP",
+    "address": "Av. 23 de Maio, 1800 - Paraíso - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901008",
+    "buyer": "Helena Ferreira",
+    "product": "Calça Cargo Verde",
+    "status": "WAITING_PICKUP",
+    "address": "Rua Haddock Lobo, 987 - Cerqueira César - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901009",
+    "buyer": "Isabela Alves",
+    "product": "Vestido Midi Listrado",
+    "status": "DELIVERED",
+    "address": "Rua Estados Unidos, 321 - Jardim América - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901010",
+    "buyer": "Julia Nascimento",
+    "product": "Cardigan Oversized Creme",
+    "status": "SHIPPED",
+    "address": "Av. Europa, 159 - Jardim Europa - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901011",
+    "buyer": "Larissa Pereira",
+    "product": "Short Jeans Destroyed",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Bela Cintra, 753 - Consolação - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901012",
+    "buyer": "Mariana Barbosa",
+    "product": "Camiseta Oversized Tie-Dye",
+    "status": "WAITING_PICKUP",
+    "address": "Av. Rebouças, 2456 - Pinheiros - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901013",
+    "buyer": "Natália Gomes",
+    "product": "Calça Legging Cintura Alta",
+    "status": "DELIVERED",
+    "address": "Rua Pamplona, 147 - Jardim Paulista - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901014",
+    "buyer": "Olivia Castro",
+    "product": "Jaqueta Jeans Oversized",
+    "status": "SHIPPED",
+    "address": "Av. Ibirapuera, 3103 - Moema - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901015",
+    "buyer": "Priscila Sousa",
+    "product": "Vestido Manga Longa Canelado",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Joaquim Eugênio de Lima, 680 - Jardins - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901016",
+    "buyer": "Rafaela Dias",
+    "product": "Conjunto Lingerie Renda",
+    "status": "WAITING_PICKUP",
+    "address": "Av. Cidade Jardim, 400 - Itaim Bibi - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901017",
+    "buyer": "Sabrina Carvalho",
+    "product": "Moletom Canguru Rosa",
+    "status": "DELIVERED",
+    "address": "Rua Amauri, 255 - Itaim Bibi - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901018",
+    "buyer": "Thaís Mendes",
+    "product": "Calça Wide Leg Alfaiataria",
+    "status": "SHIPPED",
+    "address": "Av. Dr. Arnaldo, 715 - Cerqueira César - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901019",
+    "buyer": "Valentina Torres",
+    "product": "Body Manga Longa Gola Alta",
+    "status": "READY_TO_SHIP",
+    "address": "Rua Groenlândia, 456 - Jardim América - São Paulo, SP"
+  },
+  {
+    "orderId": "SHN240901020",
+    "buyer": "Yasmin Ramos",
+    "product": "Saia Longa Plissada",
+    "status": "WAITING_PICKUP",
+    "address": "Av. Juscelino Kubitschek, 1830 - Vila Olímpia - São Paulo, SP"
+  }
+]
