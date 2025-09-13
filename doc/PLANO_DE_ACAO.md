@@ -8,6 +8,21 @@ Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoi
 - Frontend consumindo os endpoints reais e exibindo contadores corretos, “Todos os pedidos” via busca unificada e paginação funcional.
 - Possibilidade de fallback rápido para MOCK via configuração (feature flag).
 
+## Status (2025-09-13)
+- Backend (Fase 1 – leitura DB): concluído.
+  - Alternância mock|db|api implementada; endpoints de leitura usam DB quando DATA_SOURCE='db'.
+  - Busca unificada e estatísticas via SQL com paginação/contagem corretas.
+  - Swagger UI ajustado (docExpansion=list) e /api/info expõe dataSource.
+- Frontend (parte da Fase 3): concluído o essencial.
+  - Uso de VITE_API_BASE_URL; remoção de URLs hard-coded; contadores baseados em “total”.
+  - Aba “Todos” consumindo /orders/search (DB quando habilitado).
+- Pendências principais:
+  - start.ps1: corrigir mensagens e definir DATA_SOURCE=db no bootstrap.
+  - UI KPIs: consumir /orders/stats (substituir estimativas por dados reais).
+  - Swagger: atualizar exemplos dos payloads para refletir status em UPPERCASE e marketplace slug.
+  - README: quick-start DB-first.
+  - Smoke tests nos principais endpoints (mock e db).
+
 
 ## Escopo técnico (alto nível)
 - Backend
@@ -29,7 +44,7 @@ Objetivo: substituir o consumo de mocks por dados reais do PostgreSQL nos endpoi
 - [ ] Executar `database/init-db.ps1` via `setup-database.ps1` e confirmar `schema.sql` + `seeds.sql`
 - [ ] Rodar `back-end/migrate-json-data.js` e validar contagens nas tabelas
 - [ ] Adicionar `back-end/.env.example` (PORT, DB_HOST, DB_PORT, DB_NAME, DB_USER, DB_PASSWORD, AUTH_ENABLED, JWT_SECRET)
-- [ ] Ajustar `/api/info` para refletir a origem de dados atual (mock/db/api)
+- [x] Ajustar `/api/info` para refletir a origem de dados atual (mock/db/api)
 
 Critérios de aceitação
 - Postgres ativo em localhost:5432 com DB `hubtown_db`
@@ -39,26 +54,26 @@ Critérios de aceitação
 
 ## Fase 1 — Backend lendo do DB (Leitura)
 1) Alternância de fonte de dados
-- [ ] Adicionar `config.data = { source: process.env.DATA_SOURCE || 'mock' }`
-- [ ] Introduzir checagem desta flag nos services (prioridade: leitura via DB)
+- [x] Adicionar `config.data = { source: process.env.DATA_SOURCE || 'mock' }`
+- [x] Introduzir checagem desta flag nos services (prioridade: leitura via DB)
 
 2) Endpoints Marketplace (DB)
-- [ ] Implementar caminho DB no `marketplaceService.getOrders()` utilizando queries SQL:
+- [x] Implementar caminho DB no `marketplaceService.getOrders()` utilizando queries SQL:
   - Filtrar por marketplace (via nome mapeado na tabela `marketplaces`)
   - Aplicar busca por `orderId`, `buyer`, `product`, `address` (via joins com buyers/addresses)
   - Paginação via `LIMIT/OFFSET`
-- [ ] Manter fallback para MOCK caso `DATA_SOURCE=mock`
+- [x] Manter fallback para MOCK caso `DATA_SOURCE=mock`
 
 3) Busca Unificada (DB)
-- [ ] Implementar `orders.getAllOrders` com SQL unificado em todas as origens (todas as linhas de `orders`)
-- [ ] Suporte a `search`, `page`, `limit` e ordenação por `created_at` (ou `hub_order_id`)
+- [x] Implementar `orders.getAllOrders` com SQL unificado em todas as origens (todas as linhas de `orders`)
+- [x] Suporte a `search`, `page`, `limit` e ordenação por `created_at` (ou `hub_order_id`)
 
 4) Estatísticas (DB)
-- [ ] Reescrever `/orders/stats` para computar via SQL (COUNT por marketplace, COUNT por status, últimos n pedidos)
+- [x] Reescrever `/orders/stats` para computar via SQL (COUNT por marketplace, COUNT por status, últimos n pedidos)
 
 5) Swagger
 - [ ] Ajustar descrição e exemplos conforme payload real do DB
-- [ ] Corrigir `docExpansion` para valor suportado (`list`)
+- [x] Corrigir `docExpansion` para valor suportado (`list`)
 
 Critérios de aceitação
 - `GET /api/marketplace/shopee/orders?limit=5&page=1&search=...` retorna dados do DB com total/paginação corretos
@@ -82,12 +97,12 @@ Critérios de aceitação (parciais)
 
 
 ## Fase 3 — Frontend consumindo DB
-- [ ] Introduzir `VITE_API_BASE_URL` (env) no frontend
-- [ ] Substituir URLs fixas (`http://localhost:3001`) por `import.meta.env.VITE_API_BASE_URL`
-- [ ] Abas Shopee/ML/Shein passam a chamar endpoints DB (`/api/marketplace/:id/orders`)
-- [ ] Corrigir contadores para usar `total` da resposta (não o length da página)
-- [ ] Aba “Todos” consome `/api/orders/search` (unificada) com paginação independente
-- [ ] Mostrar estado de carregamento e erros conforme novas chamadas
+- [x] Introduzir `VITE_API_BASE_URL` (env) no frontend
+- [x] Substituir URLs fixas (`http://localhost:3001`) por `import.meta.env.VITE_API_BASE_URL`
+- [x] Abas Shopee/ML/Shein passam a chamar endpoints DB (`/api/marketplace/:id/orders`)
+- [x] Corrigir contadores para usar `total` da resposta (não o length da página)
+- [x] Aba “Todos” consome `/api/orders/search` (unificada) com paginação independente
+- [x] Mostrar estado de carregamento e erros conforme novas chamadas
 
 Critérios de aceitação
 - Ao mudar de página/aba, frontend reflete paginação real do DB
@@ -141,10 +156,11 @@ Critérios de aceitação
 
 
 ## Próximas ações (execução imediata)
-- [ ] Criar `back-end/.env.example`
-- [ ] Corrigir `start.ps1` mensagens truncadas
-- [ ] Implementar `config.data.source` e caminhos DB para leitura em `marketplaceService`
-- [ ] Ajustar frontend para `VITE_API_BASE_URL` e contadores por `total`
+- [ ] Corrigir `start.ps1` (mensagens truncadas) e definir `DATA_SOURCE=db` no bootstrap; registrar modo no log
+- [ ] Frontend: usar `/api/orders/stats` para KPIs reais (total/delivered/shipped/pending) e remover estimativas
+- [ ] Swagger: atualizar exemplos para refletir payload do DB (status UPPERCASE, marketplace slug)
+- [ ] README: adicionar quick-start DB-first (compose, migração, envs, Vite)
+- [ ] Smoke tests: validar `/marketplace/*/orders`, `/orders/search`, `/orders/stats` nos modos mock e db
 
 ---
 
