@@ -1,6 +1,6 @@
 # Hub Town — Swagger UI (guia rápido)
 
-Guia essencial para acessar e usar a documentação interativa da API de leitura (Node/Express). Escrita/ingestão é feita por um serviço Spring Boot via RabbitMQ que persiste no PostgreSQL — veja `doc/RABBIT_MQ_SETUP.md`.
+Escopo: este guia cobre a API de leitura (Node/Express) exposta em `/api/*`. A escrita/ingestão é responsabilidade de um serviço Spring Boot que publica no RabbitMQ e persiste no PostgreSQL. Para o fluxo de ingestão, consulte `doc/RABBIT_MQ_SETUP.md`.
 
 ## URLs
 - Swagger UI: http://localhost:3001/api/swagger
