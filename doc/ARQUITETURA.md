@@ -22,93 +22,93 @@ O Hub Central de Pedidos v2.0 é uma aplicação full-stack moderna com arquitet
 │                                                                                 │
 │  ┌──────────────────────────────────────────────────────────────────────────┐   │ 
 │  │ Sistema de Busca Unificada                                               │   │
-│  │ • Busca em tempo real nos 60 pedidos                                    │   │
-│  │ • Filtros: código, cliente, produto, endereço                           │   │
-│  │ • Resultados paginados e destacados                                     │   │
+│  │ • Busca em tempo real nos 60 pedidos                                     │   │
+│  │ • Filtros: código, cliente, produto, endereço                            │   │
+│  │ • Resultados paginados e destacados                                      │   │
 │  └──────────────────────────────────────────────────────────────────────────┘   │
 │                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │ Modal de Configuração de APIs                                           │   │
-│  │ • Configuração por marketplace (Shopee, ML, Shein)                     │   │
-│  │ • Tipos de auth: API Key, OAuth 2.0, JWT, Basic Auth                   │   │
-│  │ • Endpoints personalizáveis                                            │   │
-│  │ • Credenciais mascaradas para segurança                                │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
+│  ┌─────────────────────────────────────────────────────────────────────────┐    │
+│  │ Modal de Configuração de APIs                                           │    │
+│  │ • Configuração por marketplace (Shopee, ML, Shein)                      │    │
+│  │ • Tipos de auth: API Key, OAuth 2.0, JWT, Basic Auth                    │    │
+│  │ • Endpoints personalizáveis                                             │    │
+│  │ • Credenciais mascaradas para segurança                                 │    │
+│  └─────────────────────────────────────────────────────────────────────────┘    │
 └─────────────────┬───────────────────────────────────────────────────────────────┘
                   │ HTTP/REST API + JWT (Opcional)
                   │ fetch() requests com headers de autenticação
                   │
-┌─────────────────▼───────────────────────────────────────────────────────────────┐
-│                          CAMADA DE APLICAÇÃO                                   │
-├─────────────────────────────────────────────────────────────────────────────────┤
-│                  BACKEND MODULAR (Node.js + Express)                           │
-│                       http://localhost:3001                                     │
-│                                                                                 │
-│  ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌──────────┐ │
-│  │  CONFIG/    │ │ MIDDLEWARE/ │ │   ROUTES/   │ │  SERVICES/  │ │  TESTS/  │ │
-│  │             │ │             │ │             │ │             │ │          │ │
-│  │• config.js  │ │• auth.js    │ │• auth.js    │ │• marketplace│ │• api-    │ │
-│  │• swagger.js │ │• cors       │ │• orders.js  │ │  Service.js │ │  integration│
-│  │ Configuração│ │• logging    │ │• marketplace│ │• Lógica de  │ │• endpoint-│ │
-│  │ centralizada│ │• error      │ │  .js        │ │  negócio    │ │  config  │ │
-│  │ de marketplaces│ │ handling   │ │ API Routes  │ │ Business    │ │ 48 testes│ │
-│  │               │ │            │ │             │ │ Logic       │ │          │ │
-│  └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ └──────────┘ │
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │ Swagger UI - Documentação Interativa                                   │   │
-│  │ • OpenAPI 3.0 specification                                            │   │
-│  │ • Interface web para testar endpoints                                  │   │
-│  │ • JWT authentication integrada                                         │   │
-│  │ • Schemas detalhados de requests/responses                             │   │
-│  │ URL: http://localhost:3001/api/swagger                                 │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-│                                                                                 │
-│  ┌─────────────────────────────────────────────────────────────────────────┐   │
-│  │ API Gateway e Roteamento                                               │   │
-│  │ • /api/marketplace/{shopee|mercadolivre|shein}/orders                  │   │
-│  │ • /api/orders/search - Busca unificada                                 │   │
-│  │ • /api/auth/* - Autenticação JWT                                       │   │
-│  │ • /api/info - Informações do sistema                                   │   │
-│  └─────────────────────────────────────────────────────────────────────────┘   │
-└─────────────────┬───────────────────────────────────────────────────────────────┘
+┌─────────────────▼───────────────────────────────────────────────────────────────────┐
+│                          CAMADA DE APLICAÇÃO                                        │
+├─────────────────────────────────────────────────────────────────────────────────────┤
+│                  BACKEND MODULAR (Node.js + Express)                                │
+│                       http://localhost:3001                                         │
+│                                                                                     │
+│  ┌────────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ ┌─────────────┐ │
+│  │  CONFIG/       │ │ MIDDLEWARE/ │ │   ROUTES/   │ │  SERVICES/  │ │  TESTS/     │ │
+│  │                │ │             │ │             │ │             │ │             │ │
+│  │• config.js     │ │• auth.js    │ │• auth.js    │ │• marketplace│ │• api-       │ │
+│  │• swagger.js    │ │• cors       │ │• orders.js  │ │  Service.js │ │  integration│ │
+│  │ Configuração   │ │• logging    │ │• marketplace│ │• Lógica de  │ │• endpoint-  │ │
+│  │ centralizada   │ │• error      │ │  .js        │ │  negócio    │ │  config     │ │
+│  │ de marketplaces│ │ handling    │ │ API Routes  │ │ Business    │ │ 48 testes   │ │
+│  │                │ │             │ │             │ │ Logic       │ │             │ │
+│  └────────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ └─────────────┘ │
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────┐        │
+│  │ Swagger UI - Documentação Interativa                                    │        │
+│  │ • OpenAPI 3.0 specification                                             │        │
+│  │ • Interface web para testar endpoints                                   │        │
+│  │ • JWT authentication integrada                                          │        │
+│  │ • Schemas detalhados de requests/responses                              │        │
+│  │ URL: http://localhost:3001/api/swagger                                  │        │
+│  └─────────────────────────────────────────────────────────────────────────┘        │
+│                                                                                     │
+│  ┌─────────────────────────────────────────────────────────────────────────┐        │
+│  │ API Gateway e Roteamento                                                │        │
+│  │ • /api/marketplace/{shopee|mercadolivre|shein}/orders                   │        │
+│  │ • /api/orders/search - Busca unificada                                  │        │
+│  │ • /api/auth/* - Autenticação JWT                                        │        │
+│  │ • /api/info - Informações do sistema                                    │        │
+│  └─────────────────────────────────────────────────────────────────────────┘        │
+└─────────────────┬───────────────────────────────────────────────────────────────────┘
                   │ File System I/O + Future Database Integration
                   │ JSON.parse() + ORM Ready Architecture
                   │
 ┌─────────────────▼───────────────────────────────────────────────────────────────┐
-│                           CAMADA DE DADOS                                      │
+│                           CAMADA DE DADOS                                       │
 ├─────────────────────────────────────────────────────────────────────────────────┤
-│                        DADOS ESTRUTURADOS (JSON)                               │
+│                        DADOS ESTRUTURADOS (JSON)                                │
 │                                                                                 │
-│  ┌──────────────────┐ ┌──────────────────┐ ┌──────────────────┐ ┌───────────┐ │
-│  │ shopee-orders    │ │ mercadolivre-    │ │ shein-orders     │ │ Configs   │ │
-│  │ .json            │ │ orders.json      │ │ .json            │ │ & Cache   │ │
-│  │                  │ │                  │ │                  │ │           │ │
-│  │ 20 pedidos       │ │ 20 pedidos       │ │ 20 pedidos       │ │ API       │ │
-│  │ • Produtos tech  │ │ • Eletrodomésticos│ │ • Moda feminina  │ │ Settings  │ │
-│  │ • Endereços BR   │ │ • Endereços BR   │ │ • Moda masculina │ │ • JWT     │ │
-│  │ • Status reais   │ │ • Status reais   │ │ • Roupas crianças│ │   Tokens  │ │
-│  │ • Preços R$      │ │ • Preços R$      │ │ • Acessórios     │ │           │ │
-│  └──────────────────┘ └──────────────────┘ └──────────────────┘ └───────────┘ │
+│  ┌──────────────────┐ ┌───────────────────┐ ┌──────────────────┐ ┌───────────┐  │
+│  │ shopee-orders    │ │ mercadolivre-     │ │ shein-orders     │ │ Configs   │  │
+│  │ .json            │ │ orders.json       │ │ .json            │ │ & Cache   │  │
+│  │                  │ │                   │ │                  │ │           │  │
+│  │ 20 pedidos       │ │ 20 pedidos        │ │ 20 pedidos       │ │ API       │  │
+│  │ • Produtos tech  │ │ • Eletrodomésticos│ │ • Moda feminina  │ │ Settings  │  │
+│  │ • Endereços BR   │ │ • Endereços BR    │ │ • Moda masculina │ │ • JWT     │  │
+│  │ • Status reais   │ │ • Status reais    │ │ • Roupas crianças│ │   Tokens  │  │
+│  │ • Preços R$      │ │ • Preços R$       │ │ • Acessórios     │ │           │  │
+│  └──────────────────┘ └───────────────────┘ └──────────────────┘ └───────────┘  │
 │                                                                                 │
-│  TOTAL: 60 pedidos mockados com dados brasileiros realistas                   │
+│  TOTAL: 60 pedidos mockados com dados brasileiros realistas                     │
 └─────────────────────────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────────────────────────┐
-│                        CAMADA DE TESTES E QUALIDADE                            │
+│                        CAMADA DE TESTES E QUALIDADE                             │
 ├─────────────────────────────────────────────────────────────────────────────────┤
-│                            SUITE DE TESTES AUTOMATIZADOS                       │
+│                            SUITE DE TESTES AUTOMATIZADOS                        │
 │                                                                                 │
-│  ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐       │
-│  │ API Integration     │ │ Endpoint Config     │ │ Test Reports        │       │
-│  │ Tests               │ │ Tests               │ │                     │       │
-│  │                     │ │                     │ │ • JSON detailed     │       │
-│  │ • Conectividade     │ │ • 48 testes         │ │ • Console logs      │       │
-│  │ • Estrutura dados   │ │ • 3 marketplaces    │ │ • History tracking  │       │
-│  │ • Paginação         │ │ • 4 auth types      │ │ • Success metrics   │       │
-│  │ • Busca unificada   │ │ • Validação URLs    │ │ • 100% success rate │       │
-│  │                     │ │ • Headers HTTP      │ │                     │       │
-│  └─────────────────────┘ └─────────────────────┘ └─────────────────────┘       │
+│  ┌─────────────────────┐ ┌─────────────────────┐ ┌─────────────────────┐        │
+│  │ API Integration     │ │ Endpoint Config     │ │ Test Reports        │        │
+│  │ Tests               │ │ Tests               │ │                     │        │
+│  │                     │ │                     │ │ • JSON detailed     │        │
+│  │ • Conectividade     │ │ • 48 testes         │ │ • Console logs      │        │
+│  │ • Estrutura dados   │ │ • 3 marketplaces    │ │ • History tracking  │        │
+│  │ • Paginação         │ │ • 4 auth types      │ │ • Success metrics   │        │
+│  │ • Busca unificada   │ │ • Validação URLs    │ │ • 100% success rate │        │
+│  │                     │ │ • Headers HTTP      │ │                     │        │
+│  └─────────────────────┘ └─────────────────────┘ └─────────────────────┘        │
 └─────────────────────────────────────────────────────────────────────────────────┘
 ```
 
