@@ -21,6 +21,18 @@ Verificar se todos os tipos de autenticação suportados pelo sistema funcionam 
 - ✅ **API Key**: Verificar comprimento mínimo e formato
 - ✅ **OAuth 2.0**: Validar Client ID, Client Secret e Redirect URI
 - ✅ **JWT**: Verificar formato do token (deve começar com "eyJ")
+## Links rápidos
+
+- Objetivo: #objetivo
+- Escopo dos testes: #testes-realizados
+- Como executar: #como-executar
+- Runner completo: #runner-completo-recomendado
+- Configurações de teste: #configurações-de-teste
+- Relatórios: #relatórios
+- Exemplo de saída: #exemplo-de-saída
+- Observações: #observações
+- Referências: #referências
+
 - ✅ **Basic Auth**: Validar username e password com requisitos mínimos
 
 ### 3. Validação de Headers HTTP
@@ -32,27 +44,27 @@ Verificar se todos os tipos de autenticação suportados pelo sistema funcionam 
 
 ### 4. Simulação de Conectividade
 - ✅ Simular tentativa de conexão com endpoint
-- ✅ Verificar resposta do servidor (mock)
-- ✅ Testar timeout e tratamento de erros
-
+- Verificar se URLs são válidas (HTTPS)
+- Validar formato da URL
+- Confirmar hostname presente
 ## Como Executar
 
-### Executar apenas este teste:
-PowerShell (Windows):
-```powershell
-cd tests
+- API Key: Verificar comprimento mínimo e formato
+- OAuth 2.0: Validar Client ID, Client Secret e Redirect URI
+- JWT: Verificar formato do token (deve começar com "eyJ")
+- Basic Auth: Validar username e password com requisitos mínimos
 node .\endpoint-config-test.js
 ```
-
-Bash:
+- Verificar presença do Content-Type
+- Validar headers específicos por tipo de auth:
 ```bash
 cd tests
 node endpoint-config-test.js
 ```
 
-### Executar via script auxiliar:
-PowerShell (Windows):
-```powershell
+- Simular tentativa de conexão com endpoint
+- Verificar resposta do servidor (mock)
+- Testar timeout e tratamento de erros
 cd tests\scripts
 node .\run-endpoint-config-test.js
 ```
