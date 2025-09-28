@@ -1,5 +1,20 @@
 # Guia do Desenvolvedor — Arquitetura com Spring Boot, RabbitMQ e PostgreSQL
 
+## Links rápidos
+
+- Tecnologias e Ferramentas: #tecnologias-e-ferramentas
+- Visão Geral da Arquitetura: #visão-geral-da-arquitetura
+- Diagramas (Topologia/Sequência): #diagrama-de-topologia-alto-nível e #diagramas-de-sequência
+- Fluxos Principais: #fluxos-principais
+- Componentes e Responsabilidades: #componentes-e-responsabilidades
+- Convenções e Padrões: #convenções-e-padrões
+- Ambientes e Configuração: #ambientes-e-configuração
+- Fluxo de Desenvolvimento: #fluxo-de-desenvolvimento
+- Testes e Qualidade: #testes-e-qualidade
+- Observabilidade e Troubleshooting: #observabilidade-e-troubleshooting
+- Deploy e Operação: #deploy-e-operação
+- Notas de Transição: #notas-de-transição
+
 Este guia descreve como desenvolver no Hub Central de Pedidos assumindo a arquitetura em que:
 - As integrações com marketplaces são consumidas por um serviço de backend em Spring Boot.
 - Os eventos e dados de pedidos trafegam por uma fila mensageria (RabbitMQ) para desacoplar ingestão e persistência.
