@@ -1,63 +1,3 @@
-# Guia do Desenvolvedor - Hub Central de Pedidos v2.0
-
-## Configuração do Ambiente de Desenvolvimento
-
-### IDE Recomendada
-- **Visual Studio Code** com extensões:
-  - ES7+ React/Redux/React-Native snippets
-  - Tailwind CSS IntelliSense
-  - Prettier - Code formatter
-  - ESLint
-  - Thunder Client (para testar API)
-  - **Swagger Viewer** (para visualizar docs OpenAPI)
-  - **REST Client** (alternativa ao Thunder Client)
-
-### Configuração do Git
-```powershell
-# Configurar informações do usuário
-git config --global user.name "Seu Nome"
-git config --global user.email "seu.email@exemplo.com"
-
-# Configurar line endings (Windows)
-git config --global core.autocrlf true
-```
-
-## Nova Estrutura Modular v2.0
-
-### Backend Modular (Node.js + Express)
-
-#### Arquivo Principal: `server.js`
-```javascript
-// Nova estrutura modular
-import express from "express";
-import cors from 'cors';
-import swaggerUi from 'swagger-ui-express';
-import config from './config/config.js';
-import { swaggerSpec } from './config/swagger.js';
-
-// Importar rotas modulares
-import authRoutes from './routes/auth.js';
-import marketplaceRoutes from './routes/marketplace.js';
-import ordersRoutes from './routes/orders.js';
-
-const app = express();
-const PORT = config.server.port;
-
-// Middleware stack v2.0
-app.use(cors(config.server.cors));
-app.use(express.json());
-app.use(logging_middleware);
-
-// Swagger UI
-app.use('/api/swagger', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
-
-// Modular routes
-app.use('/api/auth', authRoutes);
-app.use('/api/marketplace', marketplaceRoutes);
-app.use('/api/orders', ordersRoutes);
-```
-
-#### Configuração Centralizada: `config/config.js`
 # Guia do Desenvolvedor — Arquitetura com Spring Boot, RabbitMQ e PostgreSQL
 
 Este guia descreve como desenvolver no Hub Central de Pedidos assumindo a arquitetura em que:
@@ -331,4 +271,3 @@ sequenceDiagram
 ---
 
 Este documento se concentra em diretrizes e processos, sem exemplos de código, para orientar o desenvolvimento consistente na arquitetura baseada em Spring Boot, RabbitMQ e PostgreSQL.
-  } catch (error) {

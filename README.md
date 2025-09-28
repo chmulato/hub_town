@@ -34,7 +34,6 @@ Resultados ficam em `tests/results/`.
 
 ## Documentação
 
-- Índice: [doc/README.md](doc/README.md)
 - Instalação: [doc/INSTALACAO.md](doc/INSTALACAO.md)
 - Swagger (API de leitura): [doc/SWAGGER_GUIDE.md](doc/SWAGGER_GUIDE.md)
 - Arquitetura: [doc/ARQUITETURA.md](doc/ARQUITETURA.md)

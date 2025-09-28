@@ -1,23 +1,4 @@
-# Guia de Instalação e Configuração - Hub Central v2.0
-
-## Pré-requisitos
-
-### Sistema Operacional
-- Windows 10/11
-- PowerShell 5.1+ ou PowerShell Core 7+
-
-### Software Necessário
-- **Node.js 18+** - [Download](https://nodejs.org/)
-- **npm** (incluído com Node.js)
-- **Git** - [Download](https://git-scm.com/)
-
-### Novas Dependências v2.0
-- **swagger-ui-express** - Documentação interativa
-- **swagger-jsdoc** - Geração de docs OpenAPI
-- **jsonwebtoken** - Autenticação JWT
 # Guia de Instalação e Configuração — Hub Town
-
-```
 
 ## Pré-requisitos
 
@@ -164,9 +145,6 @@ docker-compose up -d
 - Swagger/OpenAPI: `doc/SWAGGER_GUIDE.md`
 - Setup do PostgreSQL: `doc/DATABASE_SETUP.md`
 - RabbitMQ (setup e filas): `doc/RABBIT_MQ_SETUP.md`
-PORT=3001
-NODE_ENV=development
-```
 
 ### Configuração do Vite
 
@@ -199,6 +177,6 @@ app.use((req, res, next) => {
 ## Próximos Passos
 
 Após a instalação, consulte:
-- [API.md](API.md) - Documentação da API
+- [SWAGGER_GUIDE.md](SWAGGER_GUIDE.md) - Documentação da API de leitura (Swagger/OpenAPI)
 - [ARQUITETURA.md](ARQUITETURA.md) - Arquitetura do sistema
 - [README.md](../README.md) - Visão geral do projeto
