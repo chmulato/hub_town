@@ -2,6 +2,17 @@
 
 Configuração do PostgreSQL local via Docker Compose, alinhada ao `start.ps1` e aos scripts da pasta `database/`.
 
+## Links rápidos
+
+- Pré-requisitos: #pré-requisitos
+- Setup rápido: #setup-rápido-recomendado
+- Setup manual: #setup-manual-alternativo
+- Conexão: #conexão
+- Comandos úteis: #comandos-úteis-powershell
+- Consultas de exemplo: #consultas-de-exemplo
+- Troubleshooting: #troubleshooting
+- Referências: #referências
+
 ## Pré-requisitos
 
 - Docker Desktop

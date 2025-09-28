@@ -2,6 +2,18 @@
 
 Este guia explica como subir o RabbitMQ no ambiente local via Docker Compose, acessar o painel de gestão e estabelecer convenções mínimas (exchanges, filas, chaves de roteamento, DLQ) para o Hub Town.
 
+## Links rápidos
+
+- Por que RabbitMQ aqui?: #por-que-rabbitmq-aqui
+- O que o Compose já fornece: #o-que-o-compose-já-fornece
+- Acessando o painel (Management UI): #acessando-o-painel-management-ui
+- Convenções para o Hub Town: #convenções-para-o-hub-town
+- Estratégia recomendada de filas: #estratégia-recomendada-de-filas-resumo-prático
+- Subindo com Docker Compose: #subindo-com-docker-compose-windows-powershell
+- Variáveis de ambiente: #variáveis-de-ambiente-para-serviços
+- Troubleshooting rápido: #troubleshooting-rápido
+- Próximos passos: #próximos-passos
+
 ## Por que RabbitMQ aqui?
 
 - Desacoplar ingestão (Spring Boot) da persistência (consumers e PostgreSQL).
