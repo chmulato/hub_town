@@ -1,5 +1,12 @@
 // config.js - Configurações centralizadas do sistema
+import dotenv from 'dotenv';
+dotenv.config();
+
 export const config = {
+  // Fonte de dados (mock | db | api)
+  data: {
+    source: process.env.DATA_SOURCE || 'mock'
+  },
   // Configurações do servidor
   server: {
     port: process.env.PORT || 3001,
@@ -9,6 +16,19 @@ export const config = {
       methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
       headers: ['Origin', 'X-Requested-With', 'Content-Type', 'Accept', 'Authorization']
     }
+  },
+
+  // Configurações do banco de dados PostgreSQL
+  database: {
+    host: process.env.DB_HOST || 'localhost',
+    port: process.env.DB_PORT || 5432,
+    database: process.env.DB_NAME || 'hubtown_db',
+    user: process.env.DB_USER || 'hubtown_user',
+    password: process.env.DB_PASSWORD || 'hubtown_pass',
+    ssl: process.env.DB_SSL === 'true' || false,
+    max: parseInt(process.env.DB_POOL_MAX) || 10,
+    idleTimeoutMillis: parseInt(process.env.DB_IDLE_TIMEOUT) || 30000,
+    connectionTimeoutMillis: parseInt(process.env.DB_CONNECTION_TIMEOUT) || 2000
   },
 
   // Configurações de autenticação

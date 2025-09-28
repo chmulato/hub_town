@@ -166,49 +166,40 @@ router.get('/stats', conditionalAuth, async (req, res) => {
   try {
     const { useRealAPI = false } = req.query;
     
-    // Buscar todos os pedidos para calcular estatísticas
+    // Se a fonte é DB, use agregações SQL
+    if (config.data.source === 'db') {
+      const stats = await marketplaceService.getStatsFromDB();
+      return res.json({ success: true, data: stats });
+    }
+
+    // Caso contrário, agregue em memória
     const allOrders = await marketplaceService.getAllOrders({
       page: 1,
-      limit: 10000, // Buscar todos para estatísticas
+      limit: 10000,
       useRealAPI: useRealAPI === 'true'
     });
 
-    // Calcular estatísticas
     const stats = {
       total: allOrders.total,
       byMarketplace: {},
       byStatus: {},
-      recentOrders: allOrders.data.slice(0, 5) // 5 pedidos mais recentes
+      recentOrders: allOrders.data.slice(0, 5)
     };
 
-    // Contar por marketplace
     allOrders.data.forEach(order => {
       const marketplace = order.marketplace;
       stats.byMarketplace[marketplace] = (stats.byMarketplace[marketplace] || 0) + 1;
-    });
-
-    // Contar por status
-    allOrders.data.forEach(order => {
       const status = order.status;
       stats.byStatus[status] = (stats.byStatus[status] || 0) + 1;
     });
 
-    // Calcular estimativas (baseado nos status)
     const delivered = stats.byStatus['DELIVERED'] || 0;
     const shipped = stats.byStatus['SHIPPED'] || 0;
-    const pending = stats.byStatus['READY_TO_SHIP'] + stats.byStatus['WAITING_PICKUP'] || 0;
+    const pending = (stats.byStatus['READY_TO_SHIP'] || 0) + (stats.byStatus['WAITING_PICKUP'] || 0);
 
-    stats.summary = {
-      total: stats.total,
-      delivered,
-      shipped,
-      pending
-    };
+    stats.summary = { total: stats.total, delivered, shipped, pending };
 
-    res.json({
-      success: true,
-      data: stats
-    });
+    res.json({ success: true, data: stats });
   } catch (error) {
     console.error('Erro ao calcular estatísticas:', error);
     

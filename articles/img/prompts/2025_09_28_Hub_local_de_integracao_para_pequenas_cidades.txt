@@ -1,0 +1,33 @@
+PROMPT PRINCIPAL (1290x1080)
+Ilustração flat semi-isométrica mostrando um HUB CENTRAL de pedidos (núcleo circular ou hexagonal com símbolo </>, ícone de dashboard ou { }) conectado por linhas de dados a logos estilizados de marketplaces (Shopee, Mercado Livre, Amazon - versões simplificadas), tela de computador com interface React, smartphone com pedidos, gráficos de vendas e ícones de API. Tema: centralização e gestão unificada de e-commerce. Paleta profissional: azul petróleo (#0F3556), azul médio (#1F5F8C), cinzas neutros e acentos verdes tech (#00D4AA). Fundo claro com padrão sutil de rede digital. Luz suave, equilíbrio visual, sem poluição. Inserir no rodapé texto curto legível: "Hub Central de Pedidos – E-commerce Unificado" (tipografia sans-serif moderna). Sem marcas reais complexas, sem pessoas, logotipos simplificados.
+
+PROMPT FUTURISTA
+Nó central luminoso (HUB) emitindo fluxos/raios de dados em arco para ícones circulares dispostos em anel (marketplaces, dashboard React, mobile app, analytics, APIs REST, notificações). Gradiente azul profundo → ciano com toques verde tech. Estética tecnológica minimalista, leve névoa digital, brilho controlado (sem exageros). Profundidade suave, sensação de orquestração inteligente de vendas online. Texto discreto inferior: "Integração E-commerce • Eficiência • Escala". Sem figuras humanas, sem marcas complexas, sem excesso de elementos.
+
+PROMPT MINIMALISTA
+Fundo branco ou cinza muito claro. Círculo central com símbolo </> ou dashboard icon e cinco/seis círculos menores alinhados em semicírculo conectados por linhas finas uniformes. Ícones ultrassimplificados (marketplace, monitor, mobile, gráfico, API, carrinho) traço limpo. Cores: azul marinho dominante (#0F3556) + acentos verde tech (#00D4AA) suaves + cinza neutro (#E6E9EC). Sombra leve (material design), foco em clareza. Título curto no rodapé: "Hub Central de Pedidos". Nenhum texto extra.
+
+PROMPT DARK ELEGANTE
+Fundo azul quase preto (#0A121A). Centro: cubo ou poliedro translúcido com circuitos internos brilhando em ciano e verde tech simbolizando HUB de e-commerce. Conexões em traços de luz até ícones outline (marketplaces, dashboard, mobile, analytics, API REST, pedidos). Glow contido, neblina tecnológica sutil, sem ruído. Inserir texto em tipografia fina e de alto contraste: "E-commerce API Hub" ou "Hub Central de Pedidos" na base. Visual premium, sofisticado, tech-focused, limpo.
+
+PROMPT VARIAÇÃO DASHBOARD
+Interface de dashboard centralizada mostrando múltiplas janelas/cards com pedidos de diferentes marketplaces (Shopee laranja, Mercado Livre amarelo, Amazon azul escuro) convergindo para um painel unificado central. Estilo flat UI/UX moderno. Paleta: azul tech + verde + neutros. Elementos: gráficos de vendas, lista de pedidos, busca unificada, métricas em tempo real. Texto curto: "Centralização que simplifica vendas online". Sem pessoas, interface clean.
+
+NEGATIVE PROMPT (usar se a ferramenta aceitar)
+logos reais complexos, marcas registradas detalhadas, pessoas, mãos, rostos, excesso de texto, watermark, assinatura, arte glitch, baixa resolução, ruído forte, distorções, reflexos exagerados, glitter, bordas grossas, sombras duras, clutter, propaganda, mockups de tela muito complexos, interfaces poluídas
+
+ALT TEXT SUGERIDO
+Ilustração de um hub central de pedidos conectando múltiplos marketplaces (Shopee, Mercado Livre, Amazon) em uma plataforma unificada de gestão para e-commerce.
+
+NOTAS DE USO
+1. Proporção alvo 1290x1080 (quase quadrado) — manter foco central sem cortar elementos de interface-chave.
+2. Caso a IA gere muito texto, manter apenas a linha principal ou remover e adicionar manualmente depois.
+3. Evitar saturação: espaço em branco melhora legibilidade no LinkedIn e redes sociais.
+4. Se houver dificuldade em equilíbrio de cores, reduzir a paleta para azul petróleo + acento verde tech.
+5. Exportar preferencialmente em PNG sem compressão agressiva.
+6. Focar em elementos de e-commerce: dashboards, marketplaces, APIs, interfaces modernas.
+
+VERSÃO CURTA (para modelos que exigem menos tokens)
+HUB central de pedidos em estilo flat semi-isométrico; centro com dashboard conectado a ícones de marketplaces (Shopee, Mercado Livre, Amazon), React interface, mobile app e analytics; paleta azul petróleo e verde tech (#0F3556 / #00D4AA); fundo claro sutil; sem pessoas; texto curto no rodapé: "Hub Central de Pedidos".
+
+-- Fim --

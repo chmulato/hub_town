@@ -1,12 +1,13 @@
 import { useEffect, useState } from "react";
 
 export default function HubCD() {
+  const API_BASE = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3001/api';
   const [shopeeOrders, setShopeeOrders] = useState([]);
   const [mlOrders, setMlOrders] = useState([]);
   const [sheinOrders, setSheinOrders] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [stats, setStats] = useState({ total: 0, shipped: 0, pending: 0 });
+  const [stats, setStats] = useState({ total: 0, shipped: 0, delivered: 0, pending: 0 });
   
   // Estados para paginação
   const [shopeePagination, setShopeePagination] = useState({ currentPage: 1, totalPages: 1, total: 0 });
@@ -32,19 +33,21 @@ export default function HubCD() {
     setError(null);
     
     try {
-      const [shopeeRes, mlRes, sheinRes] = await Promise.all([
-        fetch(`http://localhost:3001/api/marketplace/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/marketplace/mercadolivre/orders?page=${mlPage}&limit=${itemsPerPage}`),
-        fetch(`http://localhost:3001/api/marketplace/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`)
+      const [shopeeRes, mlRes, sheinRes, statsRes] = await Promise.all([
+        fetch(`${API_BASE}/marketplace/shopee/orders?page=${shopeePage}&limit=${itemsPerPage}`),
+        fetch(`${API_BASE}/marketplace/mercadolivre/orders?page=${mlPage}&limit=${itemsPerPage}`),
+        fetch(`${API_BASE}/marketplace/shein/orders?page=${sheinPage}&limit=${itemsPerPage}`),
+        fetch(`${API_BASE}/orders/stats`)
       ]);
 
-      if (!shopeeRes.ok || !mlRes.ok || !sheinRes.ok) {
+      if (!shopeeRes.ok || !mlRes.ok || !sheinRes.ok || !statsRes.ok) {
         throw new Error('Erro ao conectar com a API');
       }
 
       const shopeeResponse = await shopeeRes.json();
       const mlResponse = await mlRes.json();
       const sheinResponse = await sheinRes.json();
+      const statsResponse = await statsRes.json();
       
       setShopeeOrders(shopeeResponse.data);
       setMlOrders(mlResponse.data);
@@ -69,16 +72,11 @@ export default function HubCD() {
         total: sheinResponse.total
       });
       
-      // Calcular estatísticas baseadas no total de todos os dados
-      const totalOrders = shopeeResponse.total + mlResponse.total + sheinResponse.total;
-      const totalShipped = Math.floor(totalOrders * 0.4); // Estimativa
-      const totalPending = totalOrders - totalShipped;
-      
-      setStats({
-        total: totalOrders,
-        shipped: totalShipped,
-        pending: totalPending
-      });
+      // Estatísticas reais via /orders/stats
+      if (statsResponse && statsResponse.success && statsResponse.data && statsResponse.data.summary) {
+        const { total, delivered = 0, shipped = 0, pending = 0 } = statsResponse.data.summary;
+        setStats({ total, delivered, shipped, pending });
+      }
       
     } catch (err) {
       setError(err.message);
@@ -114,7 +112,7 @@ export default function HubCD() {
     setIsSearching(true);
 
     try {
-      const response = await fetch(`http://localhost:3001/api/orders/search?search=${encodeURIComponent(searchTerm)}&page=${page}&limit=10`);
+  const response = await fetch(`${API_BASE}/orders/search?search=${encodeURIComponent(searchTerm)}&page=${page}&limit=10`);
       
       if (!response.ok) {
         throw new Error('Erro ao buscar pedidos');
@@ -581,8 +579,8 @@ export default function HubCD() {
           <div className="bg-white p-6 rounded-xl shadow-sm border">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm font-medium text-gray-600">Enviados/Entregues</p>
-                <p className="text-3xl font-bold text-green-600">{stats.shipped}</p>
+                <p className="text-sm font-medium text-gray-600">Enviados + Entregues</p>
+                <p className="text-3xl font-bold text-green-600">{(stats.shipped || 0) + (stats.delivered || 0)}</p>
               </div>
               <div className="bg-green-100 p-3 rounded-lg">
                 <span className="text-2xl">✅</span>
@@ -684,7 +682,7 @@ export default function HubCD() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              Todos os Pedidos ({shopeeOrders.length + mlOrders.length + sheinOrders.length})
+              Todos os Pedidos ({(shopeePagination.total || 0) + (mlPagination.total || 0) + (sheinPagination.total || 0)})
             </button>
             <button
               onClick={() => setActiveTab('shopee')}
@@ -694,7 +692,7 @@ export default function HubCD() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              Shopee ({shopeeOrders.length})
+              Shopee ({shopeePagination.total})
             </button>
             <button
               onClick={() => setActiveTab('mercadolivre')}
@@ -704,7 +702,7 @@ export default function HubCD() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              Mercado Livre ({mlOrders.length})
+              Mercado Livre ({mlPagination.total})
             </button>
             <button
               onClick={() => setActiveTab('shein')}
@@ -714,7 +712,7 @@ export default function HubCD() {
                   : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
               }`}
             >
-              Shein ({sheinOrders.length})
+              Shein ({sheinPagination.total})
             </button>
           </div>
         </div>

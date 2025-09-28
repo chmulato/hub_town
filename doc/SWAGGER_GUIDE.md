@@ -1,159 +1,62 @@
-# Swagger UI - Documentação Interativa da API
+# Hub Town — Swagger UI (guia rápido)
 
-## **Acessando o Swagger**
+Escopo: este guia cobre a API de leitura (Node/Express) exposta em `/api/*`. A escrita/ingestão é responsabilidade de um serviço Spring Boot que publica no RabbitMQ e persiste no PostgreSQL. Para o fluxo de ingestão, consulte `doc/RABBIT_MQ_SETUP.md`.
 
-### URLs Disponíveis:
-- **Swagger UI Interativo**: `http://localhost:3001/api/swagger`
-- **Spec JSON**: `http://localhost:3001/api/swagger.json`
-- **Documentação Resumida**: `http://localhost:3001/api/docs` (deprecated)
+## URLs
+- Swagger UI: http://localhost:3001/api/swagger
+- Spec JSON: http://localhost:3001/api/swagger.json
+- Docs resumida: http://localhost:3001/api/docs (deprecated)
 
-## **Recursos do Swagger UI**
+Base path: o spec já define `/api`; na UI os caminhos aparecem como `/orders/*`, `/marketplace/*`, etc.
 
-### **Interface Completa**
-- **Visualização interativa** de todos os endpoints
-- **Testador de API integrado** - Execute requests diretamente na interface
-- **Documentação detalhada** com exemplos de request/response
-- **Schemas de dados** com validação
-- **Sistema de autenticação** integrado
+## Como usar (rápido)
+- Clique em “Try it out” para executar requisições pela UI.
+- Confira `GET /api/info` para status geral e se a autenticação está habilitada.
+- Importe `/api/swagger.json` no Postman/Insomnia para gerar coleções.
 
-### **Autenticação no Swagger**
-1. **Clique no botão "Authorize"** no topo da interface
-2. **Digite o token JWT** no formato: `Bearer SEU_TOKEN_JWT`
-3. **Clique "Authorize"** para salvar
-4. **Todos os requests subsequentes** usarão automaticamente o token
+## Autenticação (se habilitada)
+1) Faça login: `POST /api/auth/login` com `{"username":"admin","password":"admin123"}`.
+2) Clique em “Authorize” e informe: `Bearer <SEU_TOKEN_JWT>`.
+3) As requisições subsequentes usam o token automaticamente.
 
-### **Testando Endpoints**
+## Modelos essenciais
+- Order, PaginatedResponse, ErrorResponse, LoginRequest/Response, Marketplace, Statistics
+- Notas: `status` em MAIÚSCULAS; `marketplace` é o slug (`shopee`, `mercadolivre`, `shein`); `marketplaceInfo` traz `name`, `icon`, `color`.
 
-#### 1. **Sem Autenticação** (modo atual):
-```bash
-# Todos os endpoints estão livres para teste
-GET /api/info
-GET /api/marketplace
-GET /api/orders/search
-```
-
-#### 2. **Com Autenticação Habilitada**:
-```bash
-# 1. Fazer login primeiro
-POST /api/auth/login
-{
-  "username": "admin",
-  "password": "admin123"
-}
-
-# 2. Copiar o token da resposta
-# 3. Clicar "Authorize" no Swagger
-# 4. Colar: Bearer SEU_TOKEN_JWT
-# 5. Testar endpoints protegidos
-```
-
-## **Estrutura da Documentação**
-
-### **Tags Organizadas**
-- **Info** - Informações gerais da API
-- **Auth** - Autenticação e autorização
-- **Marketplace** - Gerenciamento de marketplaces
-- **Orders** - Gerenciamento de pedidos
-
-### **Schemas de Dados**
-- **Order** - Estrutura de um pedido
-- **PaginatedResponse** - Resposta paginada
-- **ErrorResponse** - Resposta de erro
-- **LoginRequest/Response** - Autenticação
-- **Marketplace** - Dados do marketplace
-- **Statistics** - Estatísticas dos pedidos
-
-## **Exemplos de Uso no Swagger**
-
-### 1. **Busca Unificada**
+## Exemplos
+Busca unificada
 ```yaml
 GET /api/orders/search
-Parameters:
-  - page: 1
-  - limit: 10
-  - search: "Silva"
-  - useRealAPI: false
+query: { page: 1, limit: 10, search: "Silva" }
 ```
 
-### 2. **Pedidos por Marketplace**
+Pedidos por marketplace
 ```yaml
 GET /api/marketplace/shopee/orders
-Parameters:
-  - page: 1
-  - limit: 5
-  - search: ""
+query: { page: 1, limit: 5 }
 ```
 
-### 3. **Estatísticas**
+Estatísticas
 ```yaml
 GET /api/orders/stats
-Parameters:
-  - useRealAPI: false
 ```
 
-## **Recursos Visuais**
+## Endpoints (leitura)
+- Info: `GET /api/info` (resumo também em `/api/docs`, deprecated)
+- Auth: `POST /api/auth/login`, `POST /api/auth/logout`, `GET /api/auth/validate`, `GET /api/auth/status`
+- Marketplace: `GET /api/marketplace`, `GET /api/marketplace/{marketplace}/config`, `GET /api/marketplace/{marketplace}/orders`, `GET /api/marketplace/{marketplace}/auth/validate`
+- Orders: `GET /api/orders/search`, `GET /api/orders/stats`
 
-### **Filtros e Busca**
-- **Filtro por tag** - Use a caixa de filtro no topo
-- **Busca de texto** - Procure por endpoints específicos
-- **Expansão/colapso** - Controle a visualização
-
-### **Exemplos Integrados**
-- **Request examples** - Veja exemplos de JSON de entrada
-- **Response examples** - Veja exemplos de respostas
-- **Schema validation** - Validação automática de dados
-
-### **Personalização**
-- **Tema customizado** - Interface limpa sem topbar
-- **Autorização persistente** - Token salvo na sessão
-- **Tempo de resposta** - Mostra duração das requests
-- **Extensões habilitadas** - Recursos avançados ativados
-
-## **Endpoints Documentados**
-
-### **Informações**
-- `GET /api/info` - Informações da API
-- `GET /api/docs` - Documentação resumida (deprecated)
-
-### **Autenticação**
-- `POST /api/auth/login` - Login com JWT
-- `POST /api/auth/logout` - Logout
-- `GET /api/auth/validate` - Validar token
-- `GET /api/auth/status` - Status da autenticação
-
-### **Marketplaces**
-- `GET /api/marketplace` - Listar marketplaces
-- `GET /api/marketplace/{marketplace}/config` - Configuração
-- `GET /api/marketplace/{marketplace}/orders` - Pedidos específicos
-- `GET /api/marketplace/{marketplace}/auth/validate` - Validar auth API
-
-### **Pedidos**
-- `GET /api/orders/search` - Busca unificada
-- `GET /api/orders/stats` - Estatísticas gerais
-
-## **Compatibilidade**
-
-### Endpoints Antigos (Redirecionados):
+## Compatibilidade
 - `/api/shopee/orders` → `/api/marketplace/shopee/orders`
 - `/api/ml/orders` → `/api/marketplace/mercadolivre/orders`
 - `/api/shein/orders` → `/api/marketplace/shein/orders`
 
-## **Próximos Passos**
+## Documentar um novo endpoint
+1) Adicione um bloco `@swagger` na rota (ex.: `back-end/routes/orders.js`).
+2) Para novos modelos/parâmetros, edite `back-end/config/swagger.js` em `components`.
+3) Reinicie o backend para atualizar a UI.
 
-1. **Explore a interface Swagger** em `http://localhost:3001/api/swagger`
-2. **Teste todos os endpoints** usando o testador integrado
-3. **Configure autenticação** se necessário
-4. **Use o spec JSON** para gerar clientes automaticamente
-5. **Integre com ferramentas** como Postman ou Insomnia
-
----
-
-## **Dicas de Uso**
-
-- **Use "Try it out"** para testar endpoints diretamente
-- **Copie exemplos** de request/response para sua aplicação
-- **Valide schemas** antes de implementar
-- **Configure autorização** uma vez e use em todos os endpoints
-- **Exporte o spec** para usar em outras ferramentas
-
-O Swagger UI está totalmente integrado e pronto para uso!
+## Links úteis
+- Arquitetura e fluxos: `doc/ARQUITETURA.md`
+- Fila e ingestão (Spring Boot + RabbitMQ): `doc/RABBIT_MQ_SETUP.md`

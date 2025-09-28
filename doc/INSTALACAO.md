@@ -15,266 +15,155 @@
 - **swagger-ui-express** - Documentação interativa
 - **swagger-jsdoc** - Geração de docs OpenAPI
 - **jsonwebtoken** - Autenticação JWT
-- **cors** - Cross-Origin Resource Sharing
+# Guia de Instalação e Configuração — Hub Town
 
-### Verificação dos Pré-requisitos
-```powershell
-# Verificar versões instaladas
-node --version    # Deve ser 18+
-npm --version     # Deve ser 8+
-git --version     # Qualquer versão recente
 ```
 
-## Instalação
+## Pré-requisitos
 
-### 1. Clonar o Repositório
+- Windows 10/11
+- PowerShell 5.1+ (ou PowerShell 7+)
+- Node.js 18+ e npm — https://nodejs.org/
+- Docker Desktop — https://www.docker.com/products/docker-desktop
+- Git — https://git-scm.com/
+
+Verifique versões:
 ```powershell
-git clone https://github.com/chmulato/hub_town.git
-cd hub_town
+node --version
+npm --version
+git --version
+docker --version
 ```
 
-### 2. Instalação Automática
-Execute o script de inicialização que instala dependências automaticamente:
+## Início rápido (recomendado)
+
+Na raiz do repositório:
 ```powershell
-.\start.ps1
+./start.ps1
 ```
 
 O script irá:
-- Verificar se as dependências estão instaladas
-- Instalar pacotes do back-end se necessário (incluindo Swagger)
-- Instalar pacotes do front-end se necessário
-- Configurar variáveis de ambiente
-- Iniciar ambos os serviços
-- Abrir Swagger UI automaticamente
+- Subir o PostgreSQL (Docker Compose) e aguardar readiness.
+- Aplicar `schema.sql` e `seeds.sql` e migrar os JSONs de exemplo para o DB.
+- Definir `DATA_SOURCE=db` e iniciar o back-end (porta 3001).
+- Definir `VITE_API_BASE_URL` e iniciar o front-end (porta 5173).
+- Exibir URLs úteis ao final.
 
-### 3. Instalação Manual
+URLs padrão:
+- UI: http://localhost:5173
+- API: http://localhost:3001/api
+- Swagger UI: http://localhost:3001/api/swagger
+- RabbitMQ UI: http://localhost:15672 (user: hubtown_user, pass: hubtown_pass)
 
-#### Back-end
+Referências:
+- Visão geral: `README.md`
+- Setup de RabbitMQ e estratégia de filas: `doc/RABBIT_MQ_SETUP.md`
+- Topologia e fluxos: `doc/ARQUITETURA.md`
+
+## Infraestrutura (opcional: subir manualmente)
+
+Para subir apenas a infraestrutura local (Postgres + RabbitMQ):
+```powershell
+docker-compose up -d
+```
+
+Conexão padrão do Postgres (definida no compose):
+- Host: localhost
+- Porta: 5432
+- DB: hubtown_db
+- User: hubtown_user
+- Pass: hubtown_pass
+
+Gestão do RabbitMQ:
+- UI: http://localhost:15672 (hubtown_user / hubtown_pass)
+- Guia operacional e convenções: `doc/RABBIT_MQ_SETUP.md`
+
+## Execução manual (alternativa)
+
+1) Back-end (API)
 ```powershell
 cd back-end
 npm install
-```
-
-#### Front-end  
-```powershell
-cd front-end
-npm install
-```
-
-## Configuração
-
-### Nova Estrutura de Arquivos v2.0
-```
-hub_town/
-├── README.md                 # Documentação principal
-├── start.ps1                 # Script de inicialização
-├── .gitignore               # Arquivos ignorados pelo Git
-├── back-end/                # Servidor API Modular
-│   ├── server.js            # Servidor Express principal
-│   ├── package.json         # Dependências (inclui Swagger)
-│   ├── .env.example         # Configurações de ambiente
-│   ├── config/              # 🆕 Configurações centralizadas
-│   │   ├── config.js        # Configurações do sistema
-│   │   └── swagger.js       # Configuração Swagger UI
-│   ├── middleware/          # 🆕 Middleware reutilizável
-│   │   └── auth.js          # Autenticação JWT
-│   ├── routes/              # 🆕 Rotas modulares
-│   │   ├── auth.js          # Rotas de autenticação
-│   │   ├── marketplace.js   # Rotas dos marketplaces
-│   │   └── orders.js        # Rotas de pedidos
-│   ├── services/            # 🆕 Lógica de negócio
-│   │   └── marketplaceService.js
-│   └── data/                # Dados mock expandidos
-│       ├── shopee-orders.json
-│       ├── mercadolivre-orders.json
-│       └── shein-orders.json  # 🆕 20 pedidos Shein
-├── front-end/               # Aplicação React
-│   ├── front.jsx            # Interface profissionalizada
-│   ├── index.html           # HTML base
-│   ├── package.json         # Dependências do front-end
-│   ├── vite.config.js       # Configuração Vite
-│   └── src/
-│       ├── main.jsx         # Entry point
-│       └── index.css        # Estilos
-└── doc/                     # Documentação expandida
-    ├── API.md
-    ├── API_V2_SETUP.md      # 🆕 Setup da nova versão
-    ├── SWAGGER_GUIDE.md     # 🆕 Guia do Swagger
-    ├── ARQUITETURA.md
-    ├── DESENVOLVIMENTO.md
-    └── INSTALACAO.md
-```
-
-### Configuração de Portas e URLs
-
-O sistema v2.0 usa as seguintes portas por padrão:
-- **Back-end**: 3001
-- **Front-end**: 5173
-- **Swagger UI**: http://localhost:3001/api/swagger
-- **API Info**: http://localhost:3001/api/info
-
-### 🔧 Configuração de Ambiente
-
-#### Arquivo `.env` (Opcional)
-Copie `.env.example` para `.env` e configure:
-```bash
-# Servidor
-PORT=3001
-HOST=localhost
-
-# Autenticação JWT
-AUTH_ENABLED=false
-JWT_SECRET=your-secret-key
-
-# CORS
-CORS_ORIGINS=http://localhost:5173,http://localhost:3000
-
-# Modo de desenvolvimento
-NODE_ENV=development
-```
-
-#### Configuração via `config/config.js`
-```javascript
-export const config = {
-  server: {
-    port: process.env.PORT || 3001,
-    host: process.env.HOST || 'localhost'
-  },
-  auth: {
-    enabled: process.env.AUTH_ENABLED === 'true',
-    jwtSecret: process.env.JWT_SECRET || 'default-secret'
-  },
-  marketplaces: {
-    shopee: { enabled: true, icon: 'SHOP' },
-    mercadolivre: { enabled: true, icon: 'STORE' },
-    shein: { enabled: true, icon: 'FASHION' }
-  }
-};
-```
-
-Para alterar a porta do front-end, edite `front-end/vite.config.js`:
-```javascript
-export default defineConfig({
-  server: {
-    port: 5173 // Altere aqui
-  }
-})
-```
-
-### Configuração de CORS
-
-O CORS está configurado para aceitar todas as origens em desenvolvimento. Para produção, edite `back-end/server.js`:
-
-```javascript
-app.use((req, res, next) => {
-  res.header('Access-Control-Allow-Origin', 'http://localhost:5173'); // Específico
-  // ... resto da configuração
-});
-```
-
-## Execução
-
-### Método 1: Script Automatizado (Recomendado)
-```powershell
-.\start.ps1
-```
-
-Este script:
-- Detecta automaticamente a porta configurada no back-end
-- Inicia o back-end em background
-- Aguarda o back-end ficar online
-- Inicia o front-end no terminal principal
-- Gerencia os processos automaticamente
-
-### Método 2: Manual
-
-#### Terminal 1 - Back-end
-```powershell
-cd back-end
-npm start
-# ou
-node server.js
-```
-
-#### Terminal 2 - Front-end  
-```powershell
-cd front-end
+$env:DATA_SOURCE = "db"
 npm start
 ```
 
-### Verificação da Instalação
-
-1. **Back-end**: Acesse http://localhost:3001/api/shopee/orders
-2. **Front-end**: Acesse http://localhost:5173
-3. **API Unificada**: Acesse http://localhost:3001/api/orders/search?search=joão
-
-## Solução de Problemas
-
-### Erro: "Cannot find module"
+2) Front-end (UI)
 ```powershell
-# Limpar cache e reinstalar
-cd back-end
-rm -rf node_modules package-lock.json
+cd front-end
 npm install
-
-cd ../front-end  
-rm -rf node_modules package-lock.json
-npm install
+$env:VITE_API_BASE_URL = "http://localhost:3001/api"
+npm run dev
 ```
 
-### Erro: "Port already in use"
-```powershell
-# Encontrar processo na porta
-netstat -ano | findstr :3001
+## Variáveis de ambiente (essenciais)
 
-# Matar processo (substitua PID)
-taskkill /f /pid <PID>
+- Back-end (API)
+  - `DATA_SOURCE` = mock | db | api (default: mock)
+  - `PORT` (default: 3001)
+  - `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USER`, `DB_PASSWORD` (conforme docker-compose)
+  - `NODE_ENV` (development|production)
+- Front-end (UI)
+  - `VITE_API_BASE_URL` (ex.: http://localhost:3001/api)
+
+Observação: As configurações padrão do DB são carregadas do `docker-compose.yml`. Ajustes finos de API/Swagger estão descritos em `doc/SWAGGER_GUIDE.md` e `doc/DESENVOLVIMENTO.md`.
+
+## Testes
+
+Execução end-to-end (sobe backend, aguarda readiness, roda testes, encerra):
+```powershell
+node .\tests\scripts\run-with-server.js
 ```
 
-### Erro: "CORS blocked"
-- Verifique se o back-end está rodando
-- Confirme a configuração de CORS no `server.js`
-- Verifique se as URLs estão corretas no front-end
-
-### Erro: PowerShell Execution Policy
+Execução direta da suíte:
 ```powershell
-# Permitir execução de scripts (como administrador)
+node .\tests\scripts\run-all-tests.js
+```
+
+Variáveis úteis:
+- `TEST_API_URL` (default: http://localhost:3001/api)
+- `TEST_TIMEOUT` (default: 10000)
+- `TEST_CONCURRENT` (default: false)
+
+Mais detalhes em: `tests/README.md`.
+
+## Solução de problemas
+
+- Política de execução do PowerShell
+```powershell
 Set-ExecutionPolicy RemoteSigned -Scope CurrentUser
 ```
 
-### Front-end não carrega dados
-1. Verifique se o back-end está rodando (porta 3001)
-2. Abra DevTools (F12) e verifique erros no console
-3. Confirme se a URL da API está correta no `front.jsx`
-
-### Dados não aparecem
-1. Verifique se os arquivos JSON existem em `back-end/data/`
-2. Confirme se os arquivos têm formato JSON válido
-3. Verifique permissões de leitura dos arquivos
-
-## Scripts Disponíveis
-
-### Back-end
+- Portas em uso (3001 ou 5173)
 ```powershell
-cd back-end
-npm start          # Inicia servidor
-npm run dev        # Modo desenvolvimento (se configurado)
+netstat -ano | findstr :3001
+taskkill /f /pid <PID>
 ```
 
-### Front-end
-```powershell  
-cd front-end
-npm start          # Inicia servidor de desenvolvimento
-npm run build      # Build para produção
-npm run preview    # Preview do build
+- Docker parado ou compose inconsistente
+```powershell
+docker info
+docker-compose ps
+docker-compose logs --tail=100
 ```
 
-## Configurações Avançadas
-
-### Variáveis de Ambiente
-
-Crie arquivo `.env` no back-end para configurações:
+- Resetar banco rapidamente (atenção: apaga dados do volume!)
+```powershell
+docker-compose down -v
+docker-compose up -d
 ```
+
+- Falha no front-end ao buscar dados
+  - Confirme a variável `VITE_API_BASE_URL`.
+  - Verifique se a API responde em `http://localhost:3001/api/info`.
+
+## Próximos passos
+
+- Guia do desenvolvedor: `doc/DESENVOLVIMENTO.md`
+- Arquitetura (alto nível): `doc/ARQUITETURA.md`
+- Swagger/OpenAPI: `doc/SWAGGER_GUIDE.md`
+- Setup do PostgreSQL: `doc/DATABASE_SETUP.md`
+- RabbitMQ (setup e filas): `doc/RABBIT_MQ_SETUP.md`
 PORT=3001
 NODE_ENV=development
 ```
