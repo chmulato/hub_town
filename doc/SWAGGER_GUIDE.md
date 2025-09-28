@@ -60,3 +60,12 @@ GET /api/orders/stats
 ## Links úteis
 - Arquitetura e fluxos: `doc/ARQUITETURA.md`
 - Fila e ingestão (Spring Boot + RabbitMQ): `doc/RABBIT_MQ_SETUP.md`
+
+## Solução de Problemas
+
+- Swagger não carrega: verifique se a API está em `http://localhost:3001` e acesse `http://localhost:3001/api/info`.
+- API responde, mas sem DB: o backend funciona sem conectar ao PostgreSQL, porém rotas de leitura por DB retornarão erro interno.
+- Depreciação de caminhos: prefira `/api/swagger` e `/api/swagger.json`; `/api/docs` é apenas um atalho legacy.
+- CORS ao usar Postman/Insomnia: não se aplica; em browser, confirme configurações de CORS no backend.
+- Autenticação: se `AUTH_ENABLED=false`, use as rotas sem bearer token; ao habilitar, faça `POST /api/auth/login` e use `Authorize`.
+- Cache do navegador: force refresh (Ctrl+F5) se alterações de spec não aparecerem.
