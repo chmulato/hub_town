@@ -2,6 +2,15 @@
 
 Uma visão rápida para subir o ambiente local, URLs úteis, variáveis-chave e onde ler mais.
 
+## Links rápidos
+
+- Como subir: #como-subir-windows-powershell
+- URLs: #urls
+- Variáveis de ambiente: #variáveis-de-ambiente-essenciais
+- Testes: #testes
+- Problemas comuns: #problemas-comuns-atalhos
+- Onde ler mais: #onde-ler-mais
+
 ## Como subir (Windows PowerShell)
 
 Na raiz do repositório:

@@ -1,0 +1,28 @@
+# Lychee link checker configuration
+# Docs: https://github.com/lycheeverse/lychee
+
+# Check all Markdown files and the README in subfolders
+include = ["**/*.md", "README.md"]
+
+# Allow checking fragments (#anchors) inside pages
+accept = ["200", "206", "429"]
+
+# Skip local development URLs and private endpoints
+exclude = [
+  "http://localhost:*",
+  "https://localhost:*",
+  "http://127.0.0.1:*",
+  "http://0.0.0.0:*",
+  "http://rabbitmq:*",
+  "http://postgres:*",
+]
+
+# Treat warnings as errors in CI for reliability
+fail = "warnings"
+
+# Retry options for flaky links
+max-retries = 2
+retry-wait-time = 2
+
+# Cache results to speed up
+cache = true
