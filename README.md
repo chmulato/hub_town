@@ -1,5 +1,7 @@
 # Hub Town — Central de Pedidos
 
+![Docs Link Check](https://github.com/chmulato/hub_town/actions/workflows/docs-link-check.yml/badge.svg?branch=master)
+
 Sistema para centralizar pedidos de múltiplos marketplaces em uma única experiência de leitura confiável. Arquitetura orientada a dados no banco (PostgreSQL) e ingestão desacoplada por fila (RabbitMQ) com serviços em Spring Boot. O frontend (React/Vite) consome exclusivamente a API interna de leitura (Node/Express).
 
 ![Hub Town](doc/img/2025_09_28_IMAGE_001.png)
@@ -13,6 +15,8 @@ Pré-requisitos: Node.js 18+, Docker Desktop, PowerShell.
 ```
 
 O script provisiona o PostgreSQL via Docker, aplica schema/seeds, migra os JSONs de exemplo, define `DATA_SOURCE=db`, inicia backend e frontend e imprime as URLs úteis.
+
+Para um resumo em 1 página, veja: [doc/SETUP_SUMMARY.md](doc/SETUP_SUMMARY.md)
 
 URLs úteis:
 - UI: http://localhost:5173

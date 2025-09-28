@@ -1,10 +1,10 @@
 # start.ps1
 # Script para inicializar o Hub Central de Pedidos v2.0
-# Executa no Windows PowerShell com PostgreSQL
+# Executa no Windows PowerShell com PostgreSQL + RabbitMQ
 
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host "    Hub Central de Pedidos v2.0" -ForegroundColor Green
-Write-Host "      Com PostgreSQL Database" -ForegroundColor Green
+Write-Host "    Com PostgreSQL + RabbitMQ" -ForegroundColor Green
 Write-Host "========================================" -ForegroundColor Cyan
 Write-Host ""
 
@@ -56,9 +56,20 @@ function Test-PostgreSQL {
     }
 }
 
+# Funcao para verificar se RabbitMQ esta pronto
+function Test-RabbitMQ {
+    try {
+        docker exec hubtown_rabbitmq rabbitmq-diagnostics -q ping 2>$null | Out-Null
+        return $LASTEXITCODE -eq 0
+    }
+    catch {
+        return $false
+    }
+}
+
 # Funcao para configurar banco de dados PostgreSQL
 function Setup-Database {
-    Write-Host "Configurando PostgreSQL..." -ForegroundColor Cyan
+    Write-Host "Configurando serviços: PostgreSQL e RabbitMQ..." -ForegroundColor Cyan
     
     # Verificar se docker-compose.yml existe
     if (-not (Test-Path "docker-compose.yml")) {
@@ -70,12 +81,12 @@ function Setup-Database {
     Write-Host "  Parando containers existentes..." -ForegroundColor Yellow
     docker-compose down 2>$null | Out-Null
     
-    # Iniciar PostgreSQL
-    Write-Host "  Iniciando PostgreSQL..." -ForegroundColor Green
+    # Iniciar serviços do docker-compose (PostgreSQL + RabbitMQ)
+    Write-Host "  Iniciando serviços (docker-compose up -d)..." -ForegroundColor Green
     docker-compose up -d
     
     if ($LASTEXITCODE -ne 0) {
-        Write-Host "  ERRO: Falha ao iniciar PostgreSQL" -ForegroundColor Red
+        Write-Host "  ERRO: Falha ao iniciar serviços" -ForegroundColor Red
         return $false
     }
     
@@ -98,8 +109,26 @@ function Setup-Database {
     
     Write-Host "  PostgreSQL esta pronto!" -ForegroundColor Green
 
+    # Aguardar RabbitMQ estar pronto
+    Write-Host "  Aguardando RabbitMQ ficar pronto..." -ForegroundColor Yellow
+    $attempts = 0
+    do {
+        if (Test-RabbitMQ) {
+            break
+        }
+        $attempts++
+        if ($attempts -ge $maxAttempts) {
+            Write-Host "  AVISO: Timeout aguardando RabbitMQ (continuando mesmo assim)" -ForegroundColor Yellow
+            break
+        }
+        Start-Sleep -Seconds 2
+    } while ($true)
+    if (Test-RabbitMQ) {
+        Write-Host "  RabbitMQ esta pronto!" -ForegroundColor Green
+    }
+
     # Executar scripts de inicializacao
-    Write-Host "  Executando scripts de inicializacao..." -ForegroundColor Green    # Criar tabelas
+    Write-Host "  Executando scripts de inicializacao do banco..." -ForegroundColor Green    # Criar tabelas
     Get-Content "database/schema.sql" | docker exec -i hubtown_postgres psql -U hubtown_user -d hubtown_db
     if ($LASTEXITCODE -ne 0) {
         Write-Host "  ERRO: Falha ao criar tabelas" -ForegroundColor Red
@@ -421,6 +450,9 @@ Write-Host "PostgreSQL configurado e dados migrados!" -ForegroundColor Green
 Write-Host "  Host: localhost:5432" -ForegroundColor Gray
 Write-Host "  Banco: hubtown_db" -ForegroundColor Gray
 Write-Host "  Usuario: hubtown_user" -ForegroundColor Gray
+if (Test-RabbitMQ) {
+    Write-Host "  RabbitMQ UI: http://localhost:15672 (hubtown_user / hubtown_pass)" -ForegroundColor Gray
+}
 
 Write-Host ""
 Write-Host "========================================" -ForegroundColor Cyan
@@ -559,7 +591,8 @@ Write-Host "========================================" -ForegroundColor Green
 Write-Host ""
 Write-Host "Aplicacao Web: http://localhost:$frontendPort" -ForegroundColor Cyan
 Write-Host "API Backend: http://localhost:$backendPort" -ForegroundColor Cyan
-Write-Host "Documentacao: http://localhost:$backendPort/api/swagger" -ForegroundColor Cyan
+Write-Host "Swagger UI: http://localhost:$backendPort/api/swagger" -ForegroundColor Cyan
+Write-Host "RabbitMQ UI: http://localhost:15672 (hubtown_user / hubtown_pass)" -ForegroundColor Cyan
 Write-Host ""
 Write-Host "Funcionalidades disponiveis:" -ForegroundColor Yellow
 Write-Host "  3 Marketplaces integrados (Shopee, Mercado Livre, Shein)" -ForegroundColor Gray
