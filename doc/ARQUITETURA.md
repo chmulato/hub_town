@@ -8,6 +8,16 @@ Este documento descreve a arquitetura alvo do Hub Central de Pedidos considerand
 
 O foco é garantir escalabilidade, resiliência e consistência, mantendo a experiência do usuário estável e previsível.
 
+## Links rápidos
+
+- Topologia: #topologia-alto-nível
+- Fluxos de sequência: #fluxos-de-sequência
+- Modelo de dados: #modelo-de-dados-visão-lógica
+- Contratos: #contratos
+- Não funcionais: #não-funcionais
+- Ambientes: #ambientes
+- Caminho de migração: #caminho-de-migração
+
 ## Princípios Arquiteturais
  
 - Desacoplamento por mensageria: ingestão não bloqueia escrita; consumidores podem escalar horizontalmente.
