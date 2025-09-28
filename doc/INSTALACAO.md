@@ -1,5 +1,16 @@
 # Guia de Instalação e Configuração — Hub Town
 
+## Links rápidos
+
+- Pré-requisitos: #pré-requisitos
+- Início rápido: #início-rápido-recomendado
+- Infraestrutura manual: #infraestrutura-opcional-subir-manualmente
+- Execução manual: #execução-manual-alternativa
+- Variáveis de ambiente: #variáveis-de-ambiente-essenciais
+- Testes: #testes
+- Solução de problemas: #solução-de-problemas
+- Próximos passos: #próximos-passos
+
 ## Pré-requisitos
 
 - Windows 10/11
